@@ -104,3 +104,23 @@ infercnv_obj = infercnv::run(infercnv_obj,
                              HMM=FALSE,
                              # 运行的线程数目
                              num_threads = 25) 
+## ---------------------- 安装比例进行筛选 ----------------------------
+test <- MergeResult@meta.data  %>% 
+            group_by(celltype) %>%
+            count(celltype)
+test$Prop <- apply(test[2],1,function(x) x/sum(test[[2]]))
+test$num <- round(50000*test[[3]])
+head(test)  
+# celltype          n  Prop   num
+#   <chr>         <int> <dbl> <dbl>
+# 1 Endothelials  21344 0.134  6679
+# 2 Epithelials  110447 0.691 34560
+# 3 Fibroblasts   27998 0.175  8761
+EPI_sub <- EPI[,rownames(EPI@meta.data) %in% sample(rownames(EPI@meta.data),34560)]
+EPI_sub$celltype <- "Epithelials"
+CAFs_sub <- CAFs_sub[,rownames(CAFs_sub@meta.data) %in% sample(rownames(CAFs_sub@meta.data),8761)]
+Endo_sub <- Endo_sub[,rownames(Endo_sub@meta.data) %in% sample(rownames(Endo_sub@meta.data),6679)]
+tmp <- merge(EPI_sub,CAFs_sub)
+MergeResult <- merge(Endo_sub,tmp)
+step01(data = MergeResult,celltype = celltype)
+setwd("/root/wangje/Project/刘老师/infercnv_使用内皮和CAFs_部分上皮")

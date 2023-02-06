@@ -96,3 +96,11 @@ infercnv_obj = CreateInfercnvObject(raw_counts_matrix=scRNA_matrix,
                                     ref_group_names=ref_group_names) 
 save(infercnv_obj,file = "./infercnv_obj.RData") 
 ## Infercnv第三步
+infercnv_obj = infercnv::run(infercnv_obj,
+                             cutoff=0.1, # cutoff=1 works well for Smart-seq2, and cutoff=0.1 works well for 10x Genomics
+                             out_dir="./", 
+                             cluster_by_groups=TRUE, # 聚类
+                             denoise=TRUE,
+                             HMM=FALSE,
+                             # 运行的线程数目
+                             num_threads = 25) 

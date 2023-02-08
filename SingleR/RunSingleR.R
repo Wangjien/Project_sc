@@ -28,9 +28,9 @@ RunSingleR <- function(
 RunSingleR(scRNA_data=scRNA_seurat,cluster="integrated_snn_res.0.4")
 # 单独运行
 pbmc.hesc <-SingleR(test pbmc_for_SingleR,ref list(encode,hema,hpca,immune,monaImmune),
-labels list(
-encode$label.main,
-hema$label.main,
-hpca$label.main,
-immune$label.main,
-monaImmune$label.main),clusters=clusters)
+        labels list(
+        encode$label.main,
+        hema$label.main,
+        hpca$label.main,
+        immune$label.main,
+        monaImmune$label.main),clusters=clusters)

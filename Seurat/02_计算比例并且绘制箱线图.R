@@ -78,5 +78,82 @@ PlotFractionBoxplot <- function(df.fraction=df.fraction,compaired = compaired,nc
 	return(plist)
 }
 
+## ------------------------------------------------------>>>
+## 绘制boxplot
+## ------------------------------------------------------>>>
+# df.merge
+# Patient          celltype group celltype_cells sample_cells Fraction
+# 1    CJME  B & Plasma cells R_Pre             84        16380   0.0051
+# 2    CJME Endothelial cells R_Pre           1098        16380   0.0670
+# 3    CJME  Epithelial cells R_Pre           1811        16380   0.1106
+# 4    CJME       Fibroblasts R_Pre           3367        16380   0.2056
+# 5    CJME     Myeloid cells R_Pre           9491        16380   0.5794
+# 6    CJME      NK & T cells R_Pre            529        16380   0.0323
+### BoxPlot
+PlotFractionBoxplot <- function(df.fraction=df.fraction,compaired = compaired,ncols = ncols,p.format = TRUE,text=NULL,...){
+    pacman::p_load("ggplot2","ggpubr","patchwork","cowplot","tidyverse","ggrepel","patchwork")
+    plist <- list()
+    if(p.format){
+    for (celltype in unique(df.fraction$celltype)) {
+        tmp <- df.fraction[df.fraction$celltype == celltype, ]
+        p <- ggplot(tmp, aes(x = group, y = Fraction)) +
+            geom_boxplot(aes(fill = group), show.legend = F, width = 0.6, outlier.colour = NA) +
+            geom_jitter(width = 0.1,size = 2, fill = "black",color="black") + # 绘制散点
+            geom_line(aes(group = Patient), color = "darkgrey", lwd = 0.5) + # 配对样本间连线
+            theme(
+                panel.grid = element_blank(),
+                legend.position = "none",
+                axis.line = element_line(colour = "black", size = 1.2),
+                panel.background = element_blank(),
+                plot.title = element_text(hjust = 0.5,size=23,face="bold"),
+                plot.subtitle = element_text(size = 23, hjust = 0.5),
+                axis.text = element_text(size = 23, color = "black"),
+                axis.title = element_text(size = 23, color = "black"),
+                axis.text.x = element_text(angle = 45, hjust = 0.5, vjust = 0.5),
+            ) +
+            labs(x = "", y = "Fraction", title = celltype) +
+            # geom_text_repel(aes(group, prop, label=sample),size=2)+
+            # ggpubr::stat_compare_means(method = "wilcox.test", hide.ns = F, comparisons = compaired, label = "p.format", symnum.args = symnum.args, size = 6) +
+            ggpubr::stat_compare_means(method="wilcox.test",hide.ns = F,comparisons = compaired,label="p.formot")+
+            scale_fill_manual(values = c("#3b9aac","#a74947","#4470a1","#8da24f","#6d5a87"))
+            plist[[celltype]] <- p
+        }
+    }else{
+         for (celltype in unique(df.fraction$celltype)) {
+        tmp <- df.fraction[df.fraction$celltype == celltype, ]
+        p <- ggplot(tmp, aes(x = group, y = Fraction)) +
+            geom_boxplot(aes(fill = group), show.legend = F, width = 0.6, outlier.colour = NA) +
+            geom_jitter(width = 0.1,size = 2, fill = "black",color="black") + # 绘制散点
+            geom_line(aes(group = Patient), color = "darkgrey", lwd = 0.5) + # 配对样本间连线
+            theme(
+                panel.grid = element_blank(),
+                legend.position = "none",
+                axis.line = element_line(colour = "black", size = 1.2),
+                panel.background = element_blank(),
+                plot.title = element_text(hjust = 0.5,size=23,face="bold"),
+                plot.subtitle = element_text(size = 23, hjust = 0.5),
+                axis.text = element_text(size = 23, color = "black"),
+                axis.title = element_text(size = 23, color = "black"),
+                axis.text.x = element_text(angle = 45, hjust = 0.5, vjust = 0.5),
+            ) +
+            labs(x = "", y = "Fraction", title = celltype) +
+            # geom_text_repel(aes(group, prop, label=sample),size=2)+
+            ggpubr::stat_compare_means(method = "wilcox.test", hide.ns = F, comparisons = compaired, label = "p.format", symnum.args = symnum.args, size = 6) +
+            # ggpubr::stat_compare_means(method="wilcox.test",hide.ns = F,comparisons = compaired,label="p.formot")+
+            scale_fill_manual(values = c("#3b9aac","#a74947","#4470a1","#8da24f","#6d5a87"))
+            plist[[celltype]] <- p
+      }
+    }
+    return(patchwork::wrap_plots(plist,ncol = ncols))
+}
+# 举例
+PlotFractionBoxplot(df.fraction = df.merge,compaired = compaired,ncols = 3)
+
+
+
+
+
+
+
 
 

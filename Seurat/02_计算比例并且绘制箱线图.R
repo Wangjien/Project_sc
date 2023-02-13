@@ -23,7 +23,7 @@ CalculateFraction <-
         tmp2 <- tmp2 %>% rename_with(~c("Patient","group","sample_cells"))
         # print(tmp2)
         # 合并两个文件，并且计算比例
-        tmp <- tmp1 %>% left_join(tmp2, by = "Patient") %>% 
+        tmp <- tmp1 %>% left_join(tmp2, by = c("Patient","group")) %>% 
             mutate(Fraction = round(celltype_cells/sample_cells,digits = 4))
         print(tmp)
         return(tmp)

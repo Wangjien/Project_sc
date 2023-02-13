@@ -7,6 +7,8 @@ Bcells <- c("CD79A", "CD19", "MS4A1")
 Endothelial <- c("CLDN5", "FLT1", "RAMP2")
 Plasma <- c("IGHG1", "JCHAIN", "MZB1")
 Hepatocytes <- c("ALB", "APOB", "HP")
+Mast <- c('CPA3','TPSAB1','TPSB2')
+DC <- c('LILRA4','CXCR3','IRF7')
 levels <- c("NK&T cells", "B cells", "Plasmas", "Myeloids", "Epithelials", "Endothelials", "Fibroblasts", "Hepatocytes")
 marker.list <- list(
     "NK&T cell" = NKT, "B cells" = Bcells, Plasmas = Plasma, Myeloids = Myeloids,

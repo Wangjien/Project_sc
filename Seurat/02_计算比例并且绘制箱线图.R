@@ -147,6 +147,7 @@ PlotFractionBoxplot <- function(df.fraction=df.fraction,compaired = compaired,nc
     return(patchwork::wrap_plots(plist,ncol = ncols))
 }
 # 举例
+symnum.args <- list(cutpoints = c(0, 0.005, 0.01, 0.05, 0.1, 1), symbols = c("****", "***", "**", "*", "ns"))
 PlotFractionBoxplot(df.fraction = df.merge,compaired = compaired,ncols = 3)
 
 

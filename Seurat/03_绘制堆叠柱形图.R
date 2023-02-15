@@ -39,3 +39,8 @@ p1 <- ggplot(df.fraction, aes(sample, fraction, fill = celltype)) +
     scale_fill_manual(values = excel_color) +
     scale_y_continuous(expand = c(0, 0)) +
     theme(legend.key.height = unit(1.5, "line"))
+
+
+
+
+

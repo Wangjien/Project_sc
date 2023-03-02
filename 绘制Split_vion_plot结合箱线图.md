@@ -28,7 +28,7 @@ data <- tibble(x = rep(c("A", "B"), each = 100),
 head(data)
 ```
 
-<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20230302181434119.png" alt="image-20230302181434119" style="zoom: 150%;" />
+<img src="https://s1.ax1x.com/2023/03/02/ppFOAG8.png" style="zoom: 150%;" />
 
 ```R
 ggplot(data, aes(x = x, y = z, fill = y)) +
@@ -53,7 +53,7 @@ ggplot(data, aes(x = x, y = z, fill = y)) +
     stat_compare_means(method = "wilcox.test")
 ```
 
-![image-20230302183958679](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20230302183958679.png)
+![image-20230302183958679](https://s1.ax1x.com/2023/03/02/ppFOERS.png)
 
 
 

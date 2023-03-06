@@ -12,8 +12,8 @@ DC <- c('LILRA4','CXCR3','IRF7')
 levels <- c("NK&T cells", "B cells", "Plasmas", "Myeloids", "Epithelials", "Endothelials", "Fibroblasts", "Hepatocytes")
 marker.list <- list(
     "NK&T cell" = NKT, "B cells" = Bcells, Plasmas = Plasma, Myeloids = Myeloids,
-    Epithelials = Epithelial, Endothelials = Endothelial, Fibroblasts = Fibroblasts, Hepatocytes = Hepatocytes，
-    DC = DC， Mast = Mast
+    Epithelials = Epithelial, Endothelials = Endothelial, Fibroblasts = Fibroblasts, Hepatocytes = Hepatocytes,
+    DC = DC, Mast = Mast
 )
 # ----------------------- 写成函数 ---------------------------
 plotFeature <- function(scRNA_data = scRNA_data,

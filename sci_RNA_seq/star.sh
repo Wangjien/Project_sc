@@ -7,6 +7,7 @@ STAR --runThreadN $thread \
 --genomeDir $genomeDir \
 --readFilesIn $input_file \
 --readFilesCommand zcat \
---outFilterMultimapNmax 1 \ #比对时允许的最大错配数
+#比对时允许的最大错配数
+--outFilterMultimapNmax 1 \ 
 --outFileNamePrefix $output_file_prefix \
 --outSAMtype BAM SortedByCoordinate

@@ -1,0 +1,6 @@
+cutadapt \
+-g TGGTATCAACGCAGAGTACATGGG \
+-a AAAAAAAAAAAAAAA \
+I230303_I230303-11_2.barc0de.fastq \
+-m 37 \
+-o I230303_I230303-11_2.barc0de.clearn.fastq

@@ -20,6 +20,7 @@ library(patchwork)
 library(gghalves)
 library(stringr)
 library(rstatix)
+library(ggunchained) 
 
 set.seed(123)
 data <- tibble(x = rep(c("A", "B"), each = 100),

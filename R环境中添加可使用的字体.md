@@ -14,6 +14,7 @@ font_import(paths = "/usr/share/fonts/truetype/msttcorefonts/", pattern = "Couri
 font_import(paths = "/usr/share/fonts/truetype/msttcorefonts/", pattern = "Georgia.ttf")
 font_import(paths = "/usr/share/fonts/truetype/msttcorefonts/", pattern = "Comic_Sans_MS_Bold.ttf")
 font_import(paths = "/usr/share/fonts/truetype/msttcorefonts/", pattern = "Webdings.ttf")
+font_import(paths = "/usr/share/fonts/truetype/msttcorefonts/", pattern = "Arial.ttf")
 
 # 使用字体
 df <- data.frame(

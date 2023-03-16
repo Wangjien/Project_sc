@@ -103,6 +103,14 @@ dev.off()
 ### 髓系新的分群，计算表达量
 
 ```R
+scRNA_seurat$new_celltype <- ifelse(
+    scRNA_seurat$celltype %in% grep("^Macro", unique(scRNA_seurat$celltype), value = T), "Macrophage", ifelse(
+        scRNA_seurat$celltype %in% c("migDC", "cDC2_CD1C", "cDC1_CLEC9A"), "DC cells",
+        ifelse(
+            scRNA_seurat$celltype %in% c("Mono_CD14"), "Mono_CD14", scRNA_seurat$celltype
+        )
+    )
+)
 scRNA_seurat$Treat_assess <- gsub("CRPR-|SDPD-", "", scRNA_seurat$Treat_assess)
 scRNA_seurat$Treat_assess <- factor(scRNA_seurat$Treat_assess, levels = c("R_Pre", "R_Post", "NR_Pre", "NR_Post"))
 scRNA_seurat$new_celltype <- paste0(scRNA_seurat$new_celltype, "__", scRNA_seurat$Treat_assess)

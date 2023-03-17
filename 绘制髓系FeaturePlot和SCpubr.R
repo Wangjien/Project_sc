@@ -19,7 +19,7 @@ Macro_NLRP3 <- c('NLRP3','EREG','IL1B')
 Macro_LYVE1 <- c('LYVE1','PLTP','SEPP1')
 Macro_C1QC <- c('C1QC','C1QA','APOE')
 Keratinocyte <- c('KRT1','KRT10','KRTDAP')
-Check_point <- c('VSIR','VSIG4','LGALS9','CD274','CD273','PDCD1','SIGLEC10')
+Check_point <- c('VSIR','VSIG4','LGALS9','CD274','CD273','PDCD1','SIGLEC10','PDCD1LG2')
 
 marker.list <- list(MKIT = MKIT,
                     pDC_LILRA4 = pDC_LILRA4,
@@ -98,11 +98,11 @@ plotFeature <- function(scRNA_data = scRNA_data,
     ...
 }
 # FeaturePlot
-png("/root/wangje/Project/刘老师/Myeloids/Fig/Myeloids_多个markerFeaturePlot.png",height =10000,width = 6000,res=300)
+png("/root/wangje/Project/刘老师/Myeloids/Fig/Myeloids_多个markerFeaturePlot.png",height =6000,width = 10000,res=300)
 plotFeature(scRNA_data=scRNA_seurat,choose="Feature",col_num=6,marker.list=marker.list)
 dev.off()
 
 # SCpubr
-png("/root/wangje/Project/刘老师/Myeloids/Fig/Myeloids_多个marker_scpubr.png",height =10000,width = 6000,res=300)
+png("/root/wangje/Project/刘老师/Myeloids/Fig/Myeloids_多个marker_scpubr.png",height =6000,width = 10000,res=300)
 plotFeature(scRNA_data=scRNA_seurat,choose="SCpubr",col_num=6,marker.list=marker.list)
 dev.off()

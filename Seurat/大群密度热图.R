@@ -73,12 +73,12 @@ plotFeature <- function(scRNA_data = scRNA_data,
     }
     ...
 }
-png("/root/wangje/Project/刘老师/3HER2数据/5HER2文章中的3HER2数据/Fig/Myeloids_多个大群markerFeaturePlot.png",height =10000,width = 6000,res=300)
+png("/root/wangje/Project/刘老师/3HER2数据/5HER2文章中的3HER2数据/Fig/Myeloids_多个大群markerFeaturePlot.png",height =6000,width = 6000,res=300)
 plotFeature(scRNA_data=scRNA_CCA,choose="Feature",col_num=6,marker.list=marker.list)
 dev.off()
 
 # SCpubr
-png("/root/wangje/Project/刘老师/3HER2数据/5HER2文章中的3HER2数据/Fig/Myeloids_多个大群marker_scpubr.png",height =10000,width = 6000,res=300)
+png("/root/wangje/Project/刘老师/3HER2数据/5HER2文章中的3HER2数据/Fig/Myeloids_多个大群marker_scpubr.png",height =6000,width = 6000,res=300)
 plotFeature(scRNA_data=scRNA_CCA,choose="SCpubr",col_num=6,marker.list=marker.list)
 dev.off()
                     

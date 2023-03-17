@@ -19,6 +19,7 @@ Macro_NLRP3 <- c('NLRP3','EREG','IL1B')
 Macro_LYVE1 <- c('LYVE1','PLTP','SEPP1')
 Macro_C1QC <- c('C1QC','C1QA','APOE')
 Keratinocyte <- c('KRT1','KRT10','KRTDAP')
+Proloiferating <- c('MKI67','TOP2A','STMN1')
 Check_point <- c('VSIR','VSIG4','LGALS9','CD274','CD273','PDCD1','SIGLEC10','PDCD1LG2')
 
 marker.list <- list(MKIT = MKIT,

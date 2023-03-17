@@ -99,10 +99,10 @@ plotFeature <- function(scRNA_data = scRNA_data,
 }
 # FeaturePlot
 png("/root/wangje/Project/刘老师/Myeloids/Fig/Myeloids_多个markerFeaturePlot.png",height =6000,width = 10000,res=300)
-plotFeature(scRNA_data=scRNA_seurat,choose="Feature",col_num=6,marker.list=marker.list)
+plotFeature(scRNA_data=scRNA_seurat,choose="Feature",col_num=10,marker.list=marker.list)
 dev.off()
 
 # SCpubr
 png("/root/wangje/Project/刘老师/Myeloids/Fig/Myeloids_多个marker_scpubr.png",height =6000,width = 10000,res=300)
-plotFeature(scRNA_data=scRNA_seurat,choose="SCpubr",col_num=6,marker.list=marker.list)
+plotFeature(scRNA_data=scRNA_seurat,choose="SCpubr",col_num=10,marker.list=marker.list)
 dev.off()

@@ -37,7 +37,7 @@ marker.list <- list(MKIT = MKIT,
                     Macro_LYVE1 = Macro_LYVE1,
                     Macro_C1QC = Macro_C1QC,
                     Keratinocyte = Keratinocyte,
-                    Proliferating = Proliferating
+                    Proliferating = Proliferating,
                     Check_point = Check_point)
     
 plotFeature <- function(scRNA_data = scRNA_data,

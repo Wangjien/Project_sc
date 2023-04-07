@@ -21,6 +21,7 @@ Macro_LYVE1 <- c('LYVE1','PLTP','SEPP1')
 Macro_C1QC <- c('C1QC','C1QA','APOE')
 Keratinocyte <- c('KRT1','KRT10','KRTDAP')
 Proliferating <- c('MKI67','TOP2A','STMN1')
+TAM <- c('SPP1', 'C1QC', 'VCAN', 'S100A9')
 Check_point <- c('VSIR','VSIG4','LGALS9','CD274','CD273','PDCD1','SIGLEC10','PDCD1LG2')
 
 
@@ -42,6 +43,7 @@ marker.list <- list(MKIT = MKIT,
                     Macro_C1QC = Macro_C1QC,
                     Keratinocyte = Keratinocyte,
                     Proliferating = Proliferating,
+                    TAM = TAM,
                     Check_point = Check_point)
     
 plotFeature <- function(scRNA_data = scRNA_data,

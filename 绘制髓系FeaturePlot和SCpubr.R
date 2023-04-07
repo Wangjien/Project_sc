@@ -11,6 +11,7 @@ LanghDC <- c('CD1A','CD207','RXRA')
 CD1_CLEC9A <- c('CLEC9A','FLT3','IDO1','XCR1','BATF3')
 CD2_CD1C <- c('CD1C','FCER1A','HLA-DQA1','CLEC10A','ITGAM')
 CDC3_LAMP3 <- c('LAMP3','CCR7','FSCN1')
+pDC <- c('SPP1', 'C1QC', 'VCAN', 'S100A9')
 ASDC <- c('AXL','SIGLEC6','CD22')
 Mono_CD14 <- c('CD14','FCN1','S100A9','S100A8')
 Mono_CD16 <- c('FCGR3A','LST1','LILRB2')
@@ -22,6 +23,8 @@ Keratinocyte <- c('KRT1','KRT10','KRTDAP')
 Proliferating <- c('MKI67','TOP2A','STMN1')
 Check_point <- c('VSIR','VSIG4','LGALS9','CD274','CD273','PDCD1','SIGLEC10','PDCD1LG2')
 
+
+
 marker.list <- list(MKIT = MKIT,
                     pDC_LILRA4 = pDC_LILRA4,
                     migDC = migDC,
@@ -29,6 +32,7 @@ marker.list <- list(MKIT = MKIT,
                     CD1_CLEC9A = CD1_CLEC9A,
                     CD2_CD1C = CD2_CD1C,
                     CDCD3_LAMP3 = CDC3_LAMP3,
+                    pDC = pDC,
                     ASDC = ASDC,
                     Mono_CD14 = Mono_CD14,
                     Mono_CD16 = Mono_CD16,

@@ -49,7 +49,7 @@ marker.list <- list(MKIT = MKIT,
 plotFeature <- function(scRNA_data = scRNA_data,
                         choose = "Feature",
                         col_num = 6, marker.list = marker.list,...) {
-    pacman::p_load("Seurat", "ggplot2", "tidyverse")
+    # pacman::p_load("Seurat", "ggplot2", "tidyverse")
     DefaultAssay(scRNA_data) <- "RNA"
     plist <- list()
     if (is.null(choose)) {

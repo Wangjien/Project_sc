@@ -29,7 +29,7 @@ plotFeature <- function(scRNA_data = scRNA_data,
                 tmp <- tryCatch(
                     {
                         FeaturePlot(scRNA_data, features = j) +
-                            theme(legend.position = "none") +
+                            theme(legend.position = "right") +
                             labs(title = paste0(i, "_", j))
                     },
                     error = function(e) {
@@ -53,7 +53,7 @@ plotFeature <- function(scRNA_data = scRNA_data,
                 tmp <- tryCatch(
                     {
                         SCpubr::do_NebulosaPlot(scRNA_data, features = j, viridis_color_map = "H", pt.size = 0.02) +
-                            theme(legend.position = "none") +
+                            theme(legend.position = "righty") +
                             labs(title = paste0(i, "_", j))
                     },
                     error = function(e) {

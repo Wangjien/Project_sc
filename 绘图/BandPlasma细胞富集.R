@@ -318,6 +318,8 @@ reactome_enrichmernt_analysis <- function(data, title1 = '', title2 = ''){
         # 绘图
         reactome_up = as.data.frame(reactome_up)
         reactome_down = as.data.frame(reactome_down)
+        print(head(reactome_up))
+        print(head(reactome_down))
         if(dim(reactome_up)[0] >=15){
             reactome_up$LOG10padj = -log10(reactome_up$p.adjust)
             reactome_up_sub = kegg_up %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:15)   
@@ -347,31 +349,34 @@ reactome_enrichmernt_analysis <- function(data, title1 = '', title2 = ''){
         reactome_down$LOG10padj = -log10(reactome_down$p.adjust)
         reactome_down_sub = kegg_up %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:15)   
             # print(kegg_up_sub)
-            p <- ggplot(reactome_down_sub,aes(reorder(Description,LOG10padj),LOG10padj,fill=Description))+
+            p1 <- ggplot(reactome_down_sub,aes(reorder(Description,LOG10padj),LOG10padj,fill=Description))+
                 geom_col(fill = '#a54947') + 
                 labs(title = stringr::str_c(title2,' ',i))+
                 theme(axis.text  = element_text(size = 10),
                 plot.title = element_text(face = 'bold'))+
                 coord_flip()
-            plist_up[[i]] = p
+            plist_up[[i]] = p1
         }else{
             reactome_down$LOG10padj = -log10(reactome_down$p.adjust)
             reactome_down_sub = reactome_down %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:nrow(reactome_down))  
             # print(reactome_up_sub) 
-            p <- ggplot(reactome_down_sub,aes(reorder(Description,LOG10padj),LOG10padj,fill=Description))+
+            p1 <- ggplot(reactome_down_sub,aes(reorder(Description,LOG10padj),LOG10padj,fill=Description))+
                 geom_col(fill = '#a54947') + 
                 labs(title = stringr::str_c(title2,' ',i))+
                 theme(axis.text  = element_text(size = 10),
                 plot.title = element_text(face = 'bold'))+
                 coord_flip()
-            plist_up[[i]] = p
+            plist_up[[i]] = p1
         }
-         result_list <- list(plist_up, plist_down)
-        return(result_list)
-    }, error = function(error){
-        cat(i,"出现错误！！！","\n")
-        return(NULL)
+    # }, error = function(error){
+    #     cat(i,"出现错误！！！","\n")
+    #     return(NULL)
+    # })
+
     })
+
+    result_list <- list(plist_up, plist_down)
+    return(result_list)
 }
 
 
@@ -384,3 +389,4 @@ ggsave(filename=paste0(pwd,'R_Post_R_Pre_Reactome富集分析.png'), height = 16
 ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Reactome富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Post_NR_Pre_Reactome[[1]], NR_Post_NR_Pre_Reactome[[2]]),ncol=4), bg = 'white')
 ggsave(filename=paste0(pwd,'NR_Post_R_Post_Reactome富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Post_R_Post_Reactome[[1]], NR_Post_R_Post_Reactome[[2]]),ncol=4), bg = 'white')
 ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Reactome富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Pre_R_Pre_Reactome[[1]], NR_Pre_R_Pre_Reactome[[2]]),ncol=4), bg = 'white')
+

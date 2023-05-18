@@ -355,7 +355,7 @@ reactome_enrichmernt_analysis <- function(data, title1 = '', title2 = ''){
                 theme(axis.text  = element_text(size = 10),
                 plot.title = element_text(face = 'bold'))+
                 coord_flip()
-            plist_up[[i]] = p1
+            plist_down[[i]] = p1
         }else{
             reactome_down$LOG10padj = -log10(reactome_down$p.adjust)
             reactome_down_sub = reactome_down %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:nrow(reactome_down))  
@@ -366,7 +366,7 @@ reactome_enrichmernt_analysis <- function(data, title1 = '', title2 = ''){
                 theme(axis.text  = element_text(size = 10),
                 plot.title = element_text(face = 'bold'))+
                 coord_flip()
-            plist_up[[i]] = p1
+            plist_down[[i]] = p1
         }
 
         # print(reactome_down)

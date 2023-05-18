@@ -7,8 +7,9 @@ library(clusterProfiler)
 
 stewd("/root/wangje/Project/刘老师/Bcells/Data")
 load('new_Bcells_CCA.RData')
-
+########################################################################
 # 获得差异基因
+#########################################################################
 Find_DEGs <- function(
   data,
   ident.1 = 'R_Post',
@@ -54,7 +55,10 @@ NR_Post_NR_Pre <- Find_DEGs(data = scRNA_seurat, ident.1 = 'NR_Post', ident.2 = 
 NR_Post_R_Post <- Find_DEGs(data = scRNA_seurat, ident.1 = 'NR_Post', ident.2 = 'R_Post',group = 'Treat_assess')
 NR_Pre_R_Pre <- Find_DEGs(data = scRNA_seurat, ident.1 = 'NR_Pre', ident.2 = 'R_Pre',group = 'Treat_assess')
 
+###################################################################
 # 进行GO富集分析
+###################################################################
+
 go_enrichment_analysis <- function(
     data,
     title1 = '',
@@ -154,6 +158,106 @@ NR_Pre_R_Pre_go = go_enrichment_analysis(data = NR_Pre_R_Pre, title1 = 'NR_Pre v
 
 ## 保存图片
 pwd = "/root/wangje/Project/刘老师/Bcells/Fig/富集结果/"
-ggsave(filename=paste0(pwd,'R_Post_R_Pre_Go富集分析.png'), height = 16, width = 32, plot=wrap_plots(c(R_Post_R_Pre_go[[1]], R_Post_R_Pre_go[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Go富集分析.png'), height = 16, width = 32, plot=wrap_plots(c(NR_Post_NR_Pre_go[[1]], NR_Post_NR_Pre_go[[2]]),ncol=4), bg = 'white')
+ggsave(filename=paste0(pwd,'R_Post_R_Pre_Go富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(R_Post_R_Pre_go[[1]], R_Post_R_Pre_go[[2]]),ncol=4), bg = 'white')
+ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Go富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Post_NR_Pre_go[[1]], NR_Post_NR_Pre_go[[2]]),ncol=4), bg = 'white')
+ggsave(filename=paste0(pwd,'NR_Post_R_Post_Go富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Post_R_Post_go[[1]], NR_Post_R_Post_go[[2]]),ncol=4), bg = 'white')
+ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Go富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Pre_R_Pre_go[[1]], NR_Pre_R_Pre_go[[2]]),ncol=4), bg = 'white')
 
+#################################################################
+# KEGG 富集
+#################################################################
+kegg_enrichmernt_analysis <- function(data, title1 = '', title2 = ''){
+    if(!typeof(data) == 'list'){
+        stop('输入数据不是列表结构')
+    }
+        plist_up <- list()
+        plist_down <- list()
+        tryCatch({
+            for (i in names(data)) {
+            print(i)
+            # 提取出上下调的基因
+            tmp_up <- data[[i]] %>% dplyr::filter(avg_log2FC > 0 )
+            tmp_down <- data[[i]] %>% dplyr::filter(avg_log2FC < 0 )
+            # 讲gene symbol转换为Enterz id
+            genelist_up <- clusterProfiler::bitr(
+                rownames(tmp_up),
+                fromType = 'SYMBOL',
+                toType = 'ENTREZID',
+                OrgDb = 'org.Hs.eg.db'
+                ) %>% pull(ENTREZID)
+            
+            genelist_down <- clusterProfiler::bitr(
+                rownames(tmp_down),
+                fromType = 'SYMBOL',
+                toType = 'ENTREZID',
+                OrgDb = 'org.Hs.eg.db'
+            ) %>% pull(ENTREZID)
+            print(length(genelist_up))
+            print(length(genelist_down))
+            
+            kegg_up <- clusterProfiler::enrichKEGG(
+                gene = genelist_up,
+                organism = 'hsa'
+            )
+            kegg_down <- clusterProfiler::enrichKEGG(
+                gene = genelist_down,
+                organism = 'hsa'
+            )
+            kegg_up = as.data.frame(kegg_up)
+            kegg_down = as.data.frame(kegg_down)
+            if (dim(kegg_up)[1] >=15) {
+                kegg_up$LOG10padj = -log10(kegg_up$p.adjust)
+                kegg_up_sub = kegg_up %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:15)   
+                # print(kegg_up_sub)
+                p <- ggplot(kegg_up_sub,aes(reorder(Description,LOG10padj),LOG10padj,fill=Description))+
+                    geom_col(fill = '#a54947') + 
+                    labs(title = stringr::str_c(title1,' ',i))+
+                    theme(axis.text  = element_text(size = 10),
+                    plot.title = element_text(face = 'bold'))+
+                    coord_flip()
+                plist_up[[i]] = p
+            }else{
+                print(kegg_up)
+                kegg_up$LOG10padj = -log10(kegg_up$p.adjust)
+                kegg_up_sub = kegg_up %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:nrow(kegg_up))  
+                print(kegg_down_sub) 
+                p <- ggplot(kegg_up_sub,aes(reorder(Description,LOG10padj),LOG10padj,fill=Description))+
+                    geom_col(fill = '#a54947') + 
+                    labs(title = stringr::str_c(title1,' ',i))+
+                    theme(axis.text  = element_text(size = 10),
+                    plot.title = element_text(face = 'bold'))+
+                    coord_flip()
+                plist_up[[i]] = p
+            }
+
+            if(dim(kegg_down)[1] >=15){
+                kegg_down$LOG10padj = -log10(kegg_down$p.adjust)
+                kegg_down_sub = kegg_down %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:15)   
+                p1 <- ggplot(kegg_down_sub,aes(reorder(Description,LOG10padj),LOG10padj,fill=Description))+
+                    geom_col(fill = '#a54947') + 
+                    labs(title = stringr::str_c(title2,' ',i))+
+                    theme(axis.text  = element_text(size = 10),
+                    plot.title = element_text(face = 'bold'))+
+                    coord_flip()
+                plist_down[[i]] = p1
+            }else{
+                kegg_down$LOG10padj = -log10(kegg_down$p.adjust)
+                kegg_down_sub = kegg_down %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:nrow(kegg_down))
+                p1 <- ggplot(kegg_down_sub,aes(reorder(Description,LOG10padj),LOG10padj,fill=Description))+
+                    geom_col(fill = '#a54947') + 
+                    labs(title = stringr::str_c(title2,' ',i))+
+                    theme(axis.text  = element_text(size = 10),
+                    plot.title = element_text(face = 'bold'))+
+                    coord_flip()
+                plist_down[[i]] = p1
+            }   
+        }
+    })
+    result_list <- list(plist_up, plist_down)
+    return(result_list)
+}
+
+R_Post_R_Pre_kegg = kegg_enrichmernt_analysis(data = R_Post_R_Pre, title1 = 'R_Post vs R_Pre up', title2 = 'R_Post vs R_Pre down')
+NR_Post_NR_Pre_kegg = kegg_enrichmernt_analysis(data = NR_Post_NR_Pre, title1 = 'NR_Post vs NR_Pre up', title2 = 'NR_Post vs NR_Pre down')
+NR_Post_R_Post_kegg = kegg_enrichmernt_analysis(data = NR_Post_R_Post, title1 = 'NR_Post vs R_Post up', title2 = 'NR_Post vs R_Post down')
+NR_Pre_R_Pre_kegg = kegg_enrichmernt_analysis(data = NR_Pre_R_Pre, title1 = 'NR_Pre vs R_Pre up', title2 = 'NR_Pre vs R_Pre down')

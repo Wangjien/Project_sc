@@ -5,7 +5,7 @@ library(ggplot2)
 library(clusterProfiler)
 
 
-stewd("/root/wangje/Project/刘老师/Bcells/Data")
+setwd("/root/wangje/Project/刘老师/Bcells/Data")
 load('new_Bcells_CCA.RData')
 ########################################################################
 # 获得差异基因
@@ -388,9 +388,9 @@ NR_Post_NR_Pre_Reactome <- reactome_enrichmernt_analysis(NR_Post_NR_Pre,title1 =
 NR_Post_R_Post_Reactome <- reactome_enrichmernt_analysis(NR_Post_R_Post,title1 = 'NR_Post vs R_Post Up', title2 = 'NR_Post vs R_Post down')
 NR_Pre_R_Pre_Reactome <- reactome_enrichmernt_analysis(NR_Pre_R_Pre,title1 = 'NR_Pre vs R_Pre Up', title2 = 'NR_Pre vs R_Pre down')
 # 保存图片
-ggsave(filename=paste0(pwd,'R_Post_R_Pre_Reactome富集分析.png'), height = 4, width = 8, plot=wrap_plots(c(R_Post_R_Pre_Reactome[[1]], R_Post_R_Pre_Reactome[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Reactome富集分析.png'), height = 4, width = 8, plot=wrap_plots(c(NR_Post_NR_Pre_Reactome[[1]], NR_Post_NR_Pre_Reactome[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_R_Post_Reactome富集分析.png'), height = 4, width = 8, plot=wrap_plots(c(NR_Post_R_Post_Reactome[[1]], NR_Post_R_Post_Reactome[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Reactome富集分析.png'), height = 4, width = 8, plot=wrap_plots(c(NR_Pre_R_Pre_Reactome[[1]], NR_Pre_R_Pre_Reactome[[2]]),ncol=4), bg = 'white')
+ggsave(filename=paste0(pwd,'R_Post_R_Pre_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(R_Post_R_Pre_Reactome[[1]], R_Post_R_Pre_Reactome[[2]]),ncol=2), bg = 'white')
+ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(NR_Post_NR_Pre_Reactome[[1]], NR_Post_NR_Pre_Reactome[[2]]),ncol=2), bg = 'white')
+ggsave(filename=paste0(pwd,'NR_Post_R_Post_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(NR_Post_R_Post_Reactome[[1]], NR_Post_R_Post_Reactome[[2]]),ncol=2), bg = 'white')
+ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(NR_Pre_R_Pre_Reactome[[1]], NR_Pre_R_Pre_Reactome[[2]]),ncol=2), bg = 'white')
 
 

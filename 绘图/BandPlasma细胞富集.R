@@ -320,9 +320,9 @@ reactome_enrichmernt_analysis <- function(data, title1 = '', title2 = ''){
         reactome_down = as.data.frame(reactome_down)
         print(head(reactome_up))
         print(head(reactome_down))
-        if(dim(reactome_up)[0] >=15){
+        if(dim(reactome_up)[1] >=15){
             reactome_up$LOG10padj = -log10(reactome_up$p.adjust)
-            reactome_up_sub = kegg_up %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:15)   
+            reactome_up_sub = reactome_up %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:15)   
             # print(kegg_up_sub)
             p <- ggplot(reactome_up_sub,aes(reorder(Description,LOG10padj),LOG10padj,fill=Description))+
                 geom_col(fill = '#a54947') + 
@@ -345,7 +345,7 @@ reactome_enrichmernt_analysis <- function(data, title1 = '', title2 = ''){
 
         }
 
-        if(dim(reactome_down)[0] >=15){
+        if(dim(reactome_down)[1] >=15){
         reactome_down$LOG10padj = -log10(reactome_down$p.adjust)
         reactome_down_sub = kegg_up %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:15)   
             # print(kegg_up_sub)
@@ -368,6 +368,9 @@ reactome_enrichmernt_analysis <- function(data, title1 = '', title2 = ''){
                 coord_flip()
             plist_up[[i]] = p1
         }
+
+        # print(reactome_down)
+        # print(reactome_up)
     # }, error = function(error){
     #     cat(i,"出现错误！！！","\n")
     #     return(NULL)
@@ -389,4 +392,5 @@ ggsave(filename=paste0(pwd,'R_Post_R_Pre_Reactome富集分析.png'), height = 16
 ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Reactome富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Post_NR_Pre_Reactome[[1]], NR_Post_NR_Pre_Reactome[[2]]),ncol=4), bg = 'white')
 ggsave(filename=paste0(pwd,'NR_Post_R_Post_Reactome富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Post_R_Post_Reactome[[1]], NR_Post_R_Post_Reactome[[2]]),ncol=4), bg = 'white')
 ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Reactome富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Pre_R_Pre_Reactome[[1]], NR_Pre_R_Pre_Reactome[[2]]),ncol=4), bg = 'white')
+
 

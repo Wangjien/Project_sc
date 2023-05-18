@@ -318,8 +318,8 @@ reactome_enrichmernt_analysis <- function(data, title1 = '', title2 = ''){
         # 绘图
         reactome_up = as.data.frame(reactome_up)
         reactome_down = as.data.frame(reactome_down)
-        print(head(reactome_up))
-        print(head(reactome_down))
+        # print(head(reactome_up))
+        # print(head(reactome_down))
         if(dim(reactome_up)[1] >=15){
             reactome_up$LOG10padj = -log10(reactome_up$p.adjust)
             reactome_up_sub = reactome_up %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:15)   
@@ -347,7 +347,7 @@ reactome_enrichmernt_analysis <- function(data, title1 = '', title2 = ''){
 
         if(dim(reactome_down)[1] >=15){
         reactome_down$LOG10padj = -log10(reactome_down$p.adjust)
-        reactome_down_sub = kegg_up %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:15)   
+        reactome_down_sub = reactome_down %>% arrange(desc(LOG10padj)) %>% dplyr::slice(1:15)   
             # print(kegg_up_sub)
             p1 <- ggplot(reactome_down_sub,aes(reorder(Description,LOG10padj),LOG10padj,fill=Description))+
                 geom_col(fill = '#a54947') + 

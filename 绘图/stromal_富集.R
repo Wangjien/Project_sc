@@ -6,11 +6,6 @@ library(ReactomePA)
 library(stringr)
 library(tidyverse)
 library(org.Hs.eg.db)
-
-library(Seurat)
-library(patchwork)
-library(dplyr)
-library(ggplot2)
 library(clusterProfiler)
 
 
@@ -167,11 +162,11 @@ NR_Pre_R_Pre_go = go_enrichment_analysis(data = NR_Pre_R_Pre, title1 = 'NR_Pre v
 
 
 ## 保存图片
-pwd = "/root/wangje/Project/刘老师/Bcells/Fig/富集结果/"
-ggsave(filename=paste0(pwd,'R_Post_R_Pre_Go富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(R_Post_R_Pre_go[[1]], R_Post_R_Pre_go[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Go富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Post_NR_Pre_go[[1]], NR_Post_NR_Pre_go[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_R_Post_Go富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Post_R_Post_go[[1]], NR_Post_R_Post_go[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Go富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Pre_R_Pre_go[[1]], NR_Pre_R_Pre_go[[2]]),ncol=4), bg = 'white')
+pwd = "/root/wangje/Project/刘老师/合并Endothelials和Fibroblasts/CCA/Fig/富集结果/"
+ggsave(filename=paste0(pwd,'R_Post_R_Pre_Go富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(R_Post_R_Pre_go[[1]], R_Post_R_Pre_go[[2]]),ncol=6), bg = 'white', limitsize = F)
+ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Go富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(NR_Post_NR_Pre_go[[1]], NR_Post_NR_Pre_go[[2]]),ncol=6), bg = 'white', limitsize = F)
+ggsave(filename=paste0(pwd,'NR_Post_R_Post_Go富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(NR_Post_R_Post_go[[1]], NR_Post_R_Post_go[[2]]),ncol=6), bg = 'white',limitsize = F)
+ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Go富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(NR_Pre_R_Pre_go[[1]], NR_Pre_R_Pre_go[[2]]),ncol=6), bg = 'white',limitsize = F)
 
 #################################################################
 # KEGG 富集
@@ -272,11 +267,11 @@ NR_Post_NR_Pre_kegg = kegg_enrichmernt_analysis(data = NR_Post_NR_Pre, title1 = 
 NR_Post_R_Post_kegg = kegg_enrichmernt_analysis(data = NR_Post_R_Post, title1 = 'NR_Post vs R_Post up', title2 = 'NR_Post vs R_Post down')
 NR_Pre_R_Pre_kegg = kegg_enrichmernt_analysis(data = NR_Pre_R_Pre, title1 = 'NR_Pre vs R_Pre up', title2 = 'NR_Pre vs R_Pre down')
 # 保存图片
-pwd = "/root/wangje/Project/刘老师/Bcells/Fig/富集结果/"
-ggsave(filename=paste0(pwd,'R_Post_R_Pre_kegg富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(R_Post_R_Pre_kegg[[1]], R_Post_R_Pre_kegg[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_kegg富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Post_NR_Pre_kegg[[1]], NR_Post_NR_Pre_kegg[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_R_Post_kegg富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Post_R_Post_kegg[[1]], NR_Post_R_Post_kegg[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_kegg富集分析.png'), height = 16, width = 42, plot=wrap_plots(c(NR_Pre_R_Pre_kegg[[1]], NR_Pre_R_Pre_kegg[[2]]),ncol=4), bg = 'white')
+pwd = "/root/wangje/Project/刘老师/合并Endothelials和Fibroblasts/CCA/Fig/富集结果/"
+ggsave(filename=paste0(pwd,'R_Post_R_Pre_kegg富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(R_Post_R_Pre_kegg[[1]], R_Post_R_Pre_kegg[[2]]),ncol=6), bg = 'white',limitsize = FALSE)
+ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_kegg富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(NR_Post_NR_Pre_kegg[[1]], NR_Post_NR_Pre_kegg[[2]]),ncol=6), bg = 'white', limitsize = FALSE)
+ggsave(filename=paste0(pwd,'NR_Post_R_Post_kegg富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(NR_Post_R_Post_kegg[[1]], NR_Post_R_Post_kegg[[2]]),ncol=6), bg = 'white', limitsize = FALSE)
+ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_kegg富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(NR_Pre_R_Pre_kegg[[1]], NR_Pre_R_Pre_kegg[[2]]),ncol=6), bg = 'white', limitsize = FALSE)
 
 ### Reactome 富集
 library(ReactomePA)
@@ -390,10 +385,11 @@ NR_Post_NR_Pre_Reactome <- reactome_enrichmernt_analysis(NR_Post_NR_Pre,title1 =
 NR_Post_R_Post_Reactome <- reactome_enrichmernt_analysis(NR_Post_R_Post,title1 = 'NR_Post vs R_Post Up', title2 = 'NR_Post vs R_Post down')
 NR_Pre_R_Pre_Reactome <- reactome_enrichmernt_analysis(NR_Pre_R_Pre,title1 = 'NR_Pre vs R_Pre Up', title2 = 'NR_Pre vs R_Pre down')
 # 保存图片
-ggsave(filename=paste0(pwd,'R_Post_R_Pre_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(R_Post_R_Pre_Reactome[[1]], R_Post_R_Pre_Reactome[[2]]),ncol=2), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(NR_Post_NR_Pre_Reactome[[1]], NR_Post_NR_Pre_Reactome[[2]]),ncol=2), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_R_Post_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(NR_Post_R_Post_Reactome[[1]], NR_Post_R_Post_Reactome[[2]]),ncol=2), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(NR_Pre_R_Pre_Reactome[[1]], NR_Pre_R_Pre_Reactome[[2]]),ncol=2), bg = 'white')
+pwd = "/root/wangje/Project/刘老师/合并Endothelials和Fibroblasts/CCA/Fig/富集结果/"
+ggsave(filename=paste0(pwd,'R_Post_R_Pre_Reactome富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(R_Post_R_Pre_Reactome[[1]], R_Post_R_Pre_Reactome[[2]]),ncol=6), bg = 'white',limitsize = FALSE)
+ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Reactome富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(NR_Post_NR_Pre_Reactome[[1]], NR_Post_NR_Pre_Reactome[[2]]),ncol=6), bg = 'white',limitsize = FALSE)
+ggsave(filename=paste0(pwd,'NR_Post_R_Post_Reactome富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(NR_Post_R_Post_Reactome[[1]], NR_Post_R_Post_Reactome[[2]]),ncol=6), bg = 'white',limitsize = FALSE)
+ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Reactome富集分析.png'), height = 40, width = 80, plot=wrap_plots(c(NR_Pre_R_Pre_Reactome[[1]], NR_Pre_R_Pre_Reactome[[2]]),ncol=6), bg = 'white',limitsize = FALSE)
 
 
 

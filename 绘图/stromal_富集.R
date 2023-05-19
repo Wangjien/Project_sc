@@ -1,15 +1,25 @@
 library(Seurat)
+library(ggplot2)
+library(patchwork)
+library(dplyr)
+library(ReactomePA)
+library(stringr)
+library(tidyverse)
+library(org.Hs.eg.db)
+
+library(Seurat)
 library(patchwork)
 library(dplyr)
 library(ggplot2)
 library(clusterProfiler)
 
 
-setwd("/root/wangje/Project/刘老师/Bcells/Data")
-load('new_Bcells_CCA.RData')
+setwd("/root/wangje/Project/刘老师/合并Endothelials和Fibroblasts/CCA/Data")
+load('new_scRNA_CCA.RData')
 ########################################################################
 # 获得差异基因
 #########################################################################
+Idents(scRNA_seurat) = 'celltype'
 Find_DEGs <- function(
   data,
   ident.1 = 'R_Post',
@@ -380,28 +390,13 @@ NR_Post_NR_Pre_Reactome <- reactome_enrichmernt_analysis(NR_Post_NR_Pre,title1 =
 NR_Post_R_Post_Reactome <- reactome_enrichmernt_analysis(NR_Post_R_Post,title1 = 'NR_Post vs R_Post Up', title2 = 'NR_Post vs R_Post down')
 NR_Pre_R_Pre_Reactome <- reactome_enrichmernt_analysis(NR_Pre_R_Pre,title1 = 'NR_Pre vs R_Pre Up', title2 = 'NR_Pre vs R_Pre down')
 # 保存图片
-pwd = "/root/wangje/Project/刘老师/Bcells/Fig/富集结果/"
-ggsave(filename=paste0(pwd,'R_Post_R_Pre_Reactome富集分析.png'), height = 12, width = 45, plot=wrap_plots(c(R_Post_R_Pre_Reactome[[1]], R_Post_R_Pre_Reactome[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Reactome富集分析.png'), height = 12, width = 45, plot=wrap_plots(c(NR_Post_NR_Pre_Reactome[[1]], NR_Post_NR_Pre_Reactome[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Post_R_Post_Reactome富集分析.png'), height = 12, width = 45, plot=wrap_plots(c(NR_Post_R_Post_Reactome[[1]], NR_Post_R_Post_Reactome[[2]]),ncol=4), bg = 'white')
-ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Reactome富集分析.png'), height = 12, width = 45, plot=wrap_plots(c(NR_Pre_R_Pre_Reactome[[1]], NR_Pre_R_Pre_Reactome[[2]]),ncol=4), bg = 'white')
+ggsave(filename=paste0(pwd,'R_Post_R_Pre_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(R_Post_R_Pre_Reactome[[1]], R_Post_R_Pre_Reactome[[2]]),ncol=2), bg = 'white')
+ggsave(filename=paste0(pwd,'NR_Post_NR_Pre_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(NR_Post_NR_Pre_Reactome[[1]], NR_Post_NR_Pre_Reactome[[2]]),ncol=2), bg = 'white')
+ggsave(filename=paste0(pwd,'NR_Post_R_Post_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(NR_Post_R_Post_Reactome[[1]], NR_Post_R_Post_Reactome[[2]]),ncol=2), bg = 'white')
+ggsave(filename=paste0(pwd,'NR_Pre_R_Pre_Reactome富集分析.png'), height = 6, width = 8, plot=wrap_plots(c(NR_Pre_R_Pre_Reactome[[1]], NR_Pre_R_Pre_Reactome[[2]]),ncol=2), bg = 'white')
 
-# 保存文件
-save(c('R_Post_R_Pre',
-    'NR_Pre_R_Pre',
-    'NR_Post_NR_Pre',
-    'NR_Post_R_Post',
-    'R_Post_R_Pre_go',
-    'NR_Post_R_Post_go',
-    'NR_Pre_R_Pre_go',
-    'NR_Post_NR_Pre_go',
-    'R_Post_R_Pre_kegg',
-    'NR_Post_NR_Pre_kegg',
-    'NR_Post_R_Post_kegg',
-    'NR_Pre_R_Pre_kegg',
-    'R_Post_R_Pre_Reactome',
-    'NR_Post_NR_Pre_Reactome',
-    'NR_Post_R_Post_Reactome',
-    'NR_Pre_R_Pre_Reactome'),
-    file = "./Bcells_富集.RData"
-    )
+
+
+
+
+

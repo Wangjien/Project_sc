@@ -29,7 +29,7 @@ plotFeature <- function(scRNA_data = scRNA_data,
                 #    print(paste0(i,"_",j))
                 tmp <- tryCatch(
                     {
-                        FeaturePlot(scRNA_data, features = j) +
+                        FeaturePlot(scRNA_data, features = j,raster=F) +
                             theme(legend.position = "right") +
                             labs(title = paste0(i, "_", j))
                     },

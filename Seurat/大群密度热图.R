@@ -1,4 +1,5 @@
-NKT <- c('CD3D','CD3G','CD2')
+Tcells <- c('CD3D','CD3G','CD2')
+NK_cells <- c('KLRC1','KLRC3','TRDV9')
 Fibroblasts <- c('COL1A1','DCN','LUM')
 Myeloids <- c('LYZ','CD68','TYROBP')
 Epithelial <- c('CD24','KRT19','EPCAM')
@@ -10,7 +11,7 @@ Keratinocytes <- c("KRT5","KRT14","FABP5")
 DC <- c("LILRA4","CXCR3","IRF7")
 Mast <- c("CPA3","TPSABT","TPSB2")
 
-marker.list <- list("NK&T cell"=NKT,'B cell'=Bcells,"Plasmas" =Plasma,Myeloids=Myeloids,Fibroblasts=Fibroblasts,
+marker.list <- list("NK cell"=NK_cells,"T cell"=NKT,'B cell'=Bcells,"Plasmas" =Plasma,Myeloids=Myeloids,Fibroblasts=Fibroblasts,
                     Epithelials=Epithelial,Endothelials=Endothelial,Hepatocytes=Hepatocytes,Keratinocytes=Keratinocytes,
                     DC = DC, Mast = Mast)
                     

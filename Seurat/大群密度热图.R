@@ -11,7 +11,7 @@ Keratinocytes <- c("KRT5","KRT14","FABP5")
 DC <- c("LILRA4","CXCR3","IRF7")
 Mast <- c("CPA3","TPSABT","TPSB2")
 
-marker.list <- list("NK cell"=NK_cells,"T cell"=NKT,'B cell'=Bcells,"Plasmas" =Plasma,Myeloids=Myeloids,Fibroblasts=Fibroblasts,
+marker.list <- list("NK cell"=NK_cells,"T cell"=Tcells,'B cell'=Bcells,"Plasmas" =Plasma,Myeloids=Myeloids,Fibroblasts=Fibroblasts,
                     Epithelials=Epithelial,Endothelials=Endothelial,Hepatocytes=Hepatocytes,Keratinocytes=Keratinocytes,
                     DC = DC, Mast = Mast)
                     

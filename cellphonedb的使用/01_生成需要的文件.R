@@ -339,6 +339,14 @@ g4 = as.ggplot(p_nr_post)
 ggsave(filename = './cpdb_pheatmap.png', height =  8, width =  32, plot = g1|g2|g3|g4, bg = 'white')
 
 # <<<<<<<<<<<<<<<<<< 绘制单个样本的热图 >>>>>>>>>>>>>>>>>>>>
+for(pwd in 1:length(id1)){
+    print(pwd)
+    file = paste0('/root/wangje/Project/刘老师/new_cpdb/',pwd,'/out/heatmap_count.txt', sep = '\t', check.names = F)
+        
+}
+
+
+
 
 
 

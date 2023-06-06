@@ -339,10 +339,34 @@ g4 = as.ggplot(p_nr_post)
 ggsave(filename = './cpdb_pheatmap.png', height =  8, width =  32, plot = g1|g2|g3|g4, bg = 'white')
 
 # <<<<<<<<<<<<<<<<<< 绘制单个样本的热图 >>>>>>>>>>>>>>>>>>>>
-for(pwd in 1:length(id1)){
+ids4 <- c('CJME','CJME_0707','CMDI','CMDI_0624','HDYU','HDYU_0720','HXZH','HXZH_0220','LCLI','LCLI_0623','WYJU','WYJU_0122',
+            'ZXME','ZXME_0223','ZJLI_0116','ZJLI_0312','CZYI','CZYI_0702','FHXHBS1','FHXHBS2','HEJI','HEJX','LAWE','LAWE_0309','ZEYI',
+            'ZEYI_0204','WZLA','FYYI','ZFXI','LIPE')
+ids5 <- c('RCJMEprePRLymph','RCJMEpostPRLymph','RCMDIprePRLymph','RCMDIpostPRLymph','RHDYUprePRBreast','RHDYUpostPRBrest','RHXZHprePRBreast',
+            'RHXZHpostPRBreast','RLCLIpreCRLymph','RLCLIpostChestWall','RWYJUprePRLymph','RWYJUpostPRLymph','RZXMEprePRBreast','RZXMEpostPRBreast','RZJLIprePRBreast','RZJLIpostPRBreast',
+            'NRCZYIprePDLiver','NRCZYIpostPDLiver','NRFHXHBSpreSDBreast','NRFHXHBSpostSDBreast','NRHEJIpreSDBreast','NRHEJXpostSDBreast','NRLAWEprePDLiver','NRLAWEpostPDLiver','NRZEYIprePDBreast','NRZEYIpostPDBreast',
+            'RRWZLApreChestWall','NRFYYIpreSDLiver','NRZFXIprePDBreast','NRLIPEprePDLiver')
+id = data.frame(ids4, ids5)
+
+flist = list()
+for(pwd in dir('./')){
     print(pwd)
-    file = paste0('/root/wangje/Project/刘老师/new_cpdb/',pwd,'/out/heatmap_count.txt', sep = '\t', check.names = F)
-        
+    file = read.csv(paste0('/root/wangje/Project/刘老师/new_cpdb/',pwd,'/out/heatmap_count.txt'), sep = '\t', check.names = F)
+    colnames(file) = c("SOURCE", "TARGET", "COUNT")
+    count_final = file %>% tidyr::pivot_wider(names_from = TARGET, values_from =COUNT)
+    count_mat = count_final %>% as.data.frame() 
+    count_mat = tibble::column_to_rownames(count_mat, 'SOURCE')
+    dcm <- diag(as.matrix(count_mat))
+    count_mat <- count_mat + t(count_mat)
+    diag(count_mat) <- dcm
+    p = pheatmap(
+        count_mat,
+        main = id[which(id$ids4 == pwd),'ids5'],
+        cluster_rows = F,
+        cluster_cols = F,
+        display_numbers = TRUE,
+        fondsize = 17)
+    flist[[pwd]] = p
 }
 
 

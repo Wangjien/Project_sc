@@ -197,5 +197,67 @@ do
 
 done
 
+#<<<<<<<<<<<<<<<<< 使用R绘制cellphonedb热图 >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+library(dplyr)
+library(patchwork)
+library(stringr)
+library(tibble)
+library(tidyfast)
+library(tidyverse)
+library(pheatmap)
 
+## 多个样本一起分析
+id1 <- c("CJME","CMDI","HDYU","HXZH","LCLI","WYJU","WZLA","ZXME","ZJLI_0116")
+id2 <- c("CZYI","FHXHBS1","FYYI","HEJI","LAWE","ZEYI","ZFXI","LIPE")
+id3 <- c("CJME_0707","CMDI_0624","HDYU_0720","HXZH_0220","LCLI_0623","WYJU_0122","ZXME_0223","ZJLI_0312")
 
+count_int = function(data) {
+    tmp = data %>% select(12:last_col())
+    tmp_long = tmp %>% 
+        tidyr::pivot_longer(everything(),
+               names_to = "group",
+               values_to = "value")
+    tmp_long$sig = tmp_long$value < 0.05
+    tmp_wide = tmp_long %>% select(group,sig) %>% group_by(group) %>% summarise(value = sum(sig))    
+    tmp_wide$source = str_split_fixed(tmp_wide$group,'\\|', n = 2)[,1]
+    tmp_wide$target = str_split_fixed(tmp_wide$group,'\\|', n = 2)[,2]
+    count_final = tmp_wide %>% select(source, target, value)
+    colnames(count_final) = c("SOURCE", "TARGET", "COUNT")
+    count_final = count_final %>% tidyr::pivot_wider(names_from = TARGET, values_from =COUNT)
+    count_mat = count_final %>% as.data.frame() 
+    count_mat = tibble::column_to_rownames(count_mat, 'SOURCE')
+    dcm <- diag(as.matrix(count_mat))
+    count_mat <- count_mat + t(count_mat)
+    diag(count_mat) <- dcm
+    return(count_mat)
+}
+
+for(pwd in list.files()){
+    print(pwd)
+    org_path = "/root/wangje/Project/刘老师/new_cpdb"
+    if (dir.exists(paste0(org_path,'/',pwd,'/out'))) {
+       dir.create(paste0(org_path,'/',pwd,'/out'))
+    }else{
+        next
+    }
+    pvals = read.csv(paste0(org_path,'/',pwd,'/pvalues.csv'),stringsAsFactors = F, check.names = F, header = T)
+    mat = count_int(pvals)
+    write.table(mat, file = paste0(org_path,'/',pwd,'/out/heatmap_count.txt'), sep = '\t', row.names =T, quote = F)
+}
+
+merge_file = function(file, path){
+    flist = list()
+    for(name in file){
+        flist[[name]] = read.table(paste0(path,'/',name,'/out/heatmap_count.txt'), sep = '\t', check.names = F, header = T)
+    }
+    return(flist)
+}
+
+### 尝试直接合并pvalues文件
+flist1 = list()
+for(pwd in list.files()){
+    print(pwd)
+    org_path = "/root/wangje/Project/刘老师/new_cpdb"
+    pvals = read.csv(paste0(org_path,'/',pwd,'/pvalues.csv'),stringsAsFactors = F, check.names = F, header = T)
+    flist1[[pwd]] = pvals
+}

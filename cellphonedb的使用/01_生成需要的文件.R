@@ -349,7 +349,7 @@ ids5 <- c('RCJMEprePRLymph','RCJMEpostPRLymph','RCMDIprePRLymph','RCMDIpostPRLym
 id = data.frame(ids4, ids5)
 
 flist = list()
-for(pwd in dir('./')){
+for(pwd in dirname){
     print(pwd)
     file = read.csv(paste0('/root/wangje/Project/刘老师/new_cpdb/',pwd,'/out/heatmap_count.txt'), sep = '\t', check.names = F)
     colnames(file) = c("SOURCE", "TARGET", "COUNT")
@@ -366,9 +366,10 @@ for(pwd in dir('./')){
         cluster_cols = F,
         display_numbers = TRUE,
         fondsize = 17)
-    flist[[pwd]] = p
+    flist[[pwd]] = as.ggplot(p)
 }
-
+p = wrap_plots(flist, ncol= 6)
+ggsave(filename = './cpdb_sample.png', height =  30, width =  36, plot = p, bg = 'white')
 
 
 

@@ -172,9 +172,30 @@ do
     --counts-data gene_name \
     --output-path ${output_path} \
     --threshold 0.1 \
+    --subsampling-log true \
     --threads ${n_jobs} \
     --iterations 1000 \
     --output-format csv \
     ${obs_path} \
     ${mtx_path}  
 done
+
+#--subsampling-log true #对于没有log转化的数据，还要加这个参数
+
+#<<<<<<<<<<<<<<<<< 使用cellphonedb自带的绘图函数 >>>>>>>>>>>>>>>>>>>
+for sp in $(dir /root/wangje/Project/刘老师/new_cpdb/)
+do 
+    echo "****************** ${sp} ***********************"
+    cellphonedb plot dot_plot 
+        --means-path /root/wangje/Project/刘老师/new_cpdb/${sp}/means.csv\ 
+        --pvalues-path /root/wangje/Project/刘老师/new_cpdb/${sp}/pvalues.csv\ 
+        --output-path  /root/wangje/Project/刘老师/new_cpdb/${sp}
+    cellphonedb plot heatmap_plot 
+        /root/wangje/Project/刘老师/new_cpdb/${sp}/${sp}_meta.txt\
+        --pvalues-path /root/wangje/Project/刘老师/new_cpdb/${sp}/pvalues.csv\
+        --output-path /root/wangje/Project/刘老师/new_cpdb/${sp}
+
+done
+
+
+

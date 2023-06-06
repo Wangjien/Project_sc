@@ -2,6 +2,7 @@ library(Seurat)
 library(qs)
 library(patchwork)
 library(dplyr)
+library(ggplotify)
 library(ggplot2)
 library(data.table)
 library(tidyfast)  
@@ -270,7 +271,7 @@ tidy_long = function(data){
 #%%%%%%%%%%%%% 查看不同组合的数目 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 generate_pvales = function(sample){
     flist_long = list()
-    for(pwd in id1){
+    for(pwd in sample){
         print(pwd)
         org_path = "/root/wangje/Project/刘老师/new_cpdb"
         pvals = read.csv(paste0(org_path,'/',pwd,'/pvalues.csv'),stringsAsFactors = F, check.names = F, header = T)
@@ -288,65 +289,62 @@ generate_pvales = function(sample){
     return(tidy_long(data = flist_long))
 }
 
+#<<<<<<<<<<<< 生成不同组合的数据 并且绘图>>>>>>>>>>>>>>>
+R_Pre = generate_pvales(sample = id1)
+R_Post = generate_pvales(sample = id3)
+NR_Pre = generate_pvales(sample = id2)
+NR_Post = generate_pvales(sample = id4)
+#<<<<<<<<<<<<< 绘图 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+p_r_pre = pheatmap(
+    R_Pre,
+    main = 'R_Pre',
+    cluster_rows = F,
+    cluster_cols = F,
+    display_numbers = TRUE,
+    fondsize = 17
+)
+
+p_r_post = pheatmap(
+    R_Post,
+    main = 'R_Post',
+    cluster_rows = F,
+    cluster_cols = F,
+    display_numbers = TRUE,
+    fondsize = 17
+)
+
+p_nr_pre = pheatmap(
+    NR_Pre,
+    main = 'NR_Pre',
+    cluster_rows = F,
+    cluster_cols = F,
+    display_numbers = TRUE,
+    fondsize = 17
+)
+
+p_nr_post = pheatmap(
+    NR_Post,
+    main = 'NR_Post',
+    cluster_rows = F,
+    cluster_cols = F,
+    display_numbers = TRUE,
+    fondsize = 17
+)
+
+g1 = as.ggplot(p_r_pre)
+g2 = as.ggplot(p_r_post)
+g3 = as.ggplot(p_nr_pre)
+g4 = as.ggplot(p_nr_post)
+
+ggsave(filename = './cpdb_pheatmap.png', height =  8, width =  32, plot = g1|g2|g3|g4, bg = 'white')
+
+# <<<<<<<<<<<<<<<<<< 绘制单个样本的热图 >>>>>>>>>>>>>>>>>>>>
+
+
 
 
 
 ############################################################
-flist2=list()
-for(pwd in list.files()){
-    print(pwd)
-    org_path = "/root/wangje/Project/刘老师/new_cpdb"
-    pvals = read.csv(paste0(org_path,'/',pwd,'/pvalues.csv'),stringsAsFactors = F, check.names = F, header = T)
-    flist2[[pwd]] = test_count(pvals)
-}
-
-res = Reduce(rbind, flist2)
-res = res %>% group_by(SOURCE, TARGET) %>% dplyr::summarise(vaue = sum(COUNT))
-
-#############################################################
-
-
-
-
-for(pwd in list.files()){
-    print(pwd)
-    org_path = "/root/wangje/Project/刘老师/new_cpdb"
-    if (dir.exists(paste0(org_path,'/',pwd,'/out'))) {
-       dir.create(paste0(org_path,'/',pwd,'/out'))
-    }else{
-        next
-    }
-    pvals = read.csv(paste0(org_path,'/',pwd,'/pvalues.csv'),stringsAsFactors = F, check.names = F, header = T)
-    mat = count_int(pvals)
-    write.table(mat, file = paste0(org_path,'/',pwd,'/out/heatmap_count.txt'), sep = '\t', row.names =T, quote = F)
-}
-
-all_names = c( "B cells","CD4+ T cells","CD8+ T cells","Cancer cells","DC",
-                "Endothelial cells","Fibroblasts","Macrophage","Mast cells",
-                "Monoc-CD14","NK cells","Plasma cells")
-my_sum = function(x, y){
-    if(all(dim(x) == dim(y))){
-        x + y
-    }else{
-        
-    }
-}
-
-merge_file = function(file, path){
-    flist = list()
-    for(name in file){
-        pvals = read.table(paste0(path,'/',name,'/out/heatmap_count.txt'), sep = '\t', check.names = F, header = T)
-        if(!(row(pvals) == 12 && ncol(pvals)) == 12){
-            
-        }
-
-    }
-    
-}
-R_Pre = merge_file(file = id1, path = '/root/wangje/Project/刘老师/new_cpdb')
-
-
-
 ### 尝试直接合并pvalues文件
 flist1 = list()
 for(pwd in list.files()){

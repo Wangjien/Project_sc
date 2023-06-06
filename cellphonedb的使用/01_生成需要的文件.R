@@ -207,9 +207,10 @@ library(tidyverse)
 library(pheatmap)
 
 ## 多个样本一起分析
-id1 <- c("CJME","CMDI","HDYU","HXZH","LCLI","WYJU","WZLA","ZXME","ZJLI_0116")
-id2 <- c("CZYI","FHXHBS1","FYYI","HEJI","LAWE","ZEYI","ZFXI","LIPE")
-id3 <- c("CJME_0707","CMDI_0624","HDYU_0720","HXZH_0220","LCLI_0623","WYJU_0122","ZXME_0223","ZJLI_0312")
+id1 <- c("CJME","CMDI","HDYU","HXZH","LCLI","WYJU","WZLA","ZXME","ZJLI_0116") # R_Pre
+id2 <- c("CZYI","FHXHBS1","FYYI","HEJI","LAWE","ZEYI","ZFXI","LIPE")  # NR_Pre
+id3 <- c("CJME_0707","CMDI_0624","HDYU_0720","HXZH_0220","LCLI_0623","WYJU_0122","ZXME_0223","ZJLI_0312") # R_Post
+id4 <- c("CZYI_0702","FHXHBS2","HEJX","LAWE_0309","ZEYI_0204") # NR_Post
 ###############################################################################################
 # 这里的程序是对每一个样本的cellphonedb结果中的pvale进行计数，计算pvalue的值小于0.05的，
 # 计算两种celltype之间的配受体数目， 但是在合并的时候，由于不同样本间的dim不同，合并比较有难度
@@ -251,23 +252,45 @@ count_long = count_int = function(data) {
     return(count_final)
 }
 
-#%%%%%%%%%%%%% 查看不同组合的数目 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-flist_long = list()
-for(pwd in id1){
-    print(pwd)
-    org_path = "/root/wangje/Project/刘老师/new_cpdb"
-    pvals = read.csv(paste0(org_path,'/',pwd,'/pvalues.csv'),stringsAsFactors = F, check.names = F, header = T)
-    # 保存长数据
-    flist_long[[pwd]] = count_long(data = pvals)
-    # 生成单个样本的宽数据
-    mat = count_int(pvals)
-    if (dir.exists(paste0(org_path,'/',pwd,'/out'))) {
-       dir.create(paste0(org_path,'/',pwd,'/out'))
-    }else{
-        next
+tidy_long = function(data){
+    if(is.list(data)){
+        res = Reduce(rbind, data)
+        res = res %>% group_by(SOURCE, TARGET) %>% dplyr::summarise(vaue = sum(COUNT))
+        colnames(res) = c('SOURCE', 'TARGET', 'COUNT')
+        count_final = res %>% tidyr::pivot_wider(names_from = TARGET, values_from =COUNT)
+        count_mat = count_final %>% as.data.frame() 
+        count_mat = tibble::column_to_rownames(count_mat, 'SOURCE')
+        dcm <- diag(as.matrix(count_mat))
+        count_mat <- count_mat + t(count_mat)
+        diag(count_mat) <- dcm
     }
-    write.table(mat, file = paste0(org_path,'/',pwd,'/out/heatmap_count.txt'), sep = '\t', row.names =T, quote = F)
+    return(count_mat)
 }
+
+#%%%%%%%%%%%%% 查看不同组合的数目 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+generate_pvales = function(sample){
+    flist_long = list()
+    for(pwd in id1){
+        print(pwd)
+        org_path = "/root/wangje/Project/刘老师/new_cpdb"
+        pvals = read.csv(paste0(org_path,'/',pwd,'/pvalues.csv'),stringsAsFactors = F, check.names = F, header = T)
+        # 保存长数据
+        flist_long[[pwd]] = count_long(data = pvals)
+        # 生成单个样本的宽数据
+        mat = count_int(pvals)
+        if (dir.exists(paste0(org_path,'/',pwd,'/out'))) {
+        dir.create(paste0(org_path,'/',pwd,'/out'))
+        }else{
+            next
+        }
+        write.table(mat, file = paste0(org_path,'/',pwd,'/out/heatmap_count.txt'), sep = '\t', row.names =T, quote = F)
+    }
+    return(tidy_long(data = flist_long))
+}
+
+
+
+
 ############################################################
 flist2=list()
 for(pwd in list.files()){
@@ -279,6 +302,10 @@ for(pwd in list.files()){
 
 res = Reduce(rbind, flist2)
 res = res %>% group_by(SOURCE, TARGET) %>% dplyr::summarise(vaue = sum(COUNT))
+
+#############################################################
+
+
 
 
 for(pwd in list.files()){

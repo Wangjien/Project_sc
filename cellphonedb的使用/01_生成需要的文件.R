@@ -218,7 +218,7 @@ count_int = function(data) {
                names_to = "group",
                values_to = "value")
     tmp_long$sig = tmp_long$value < 0.05
-    tmp_wide = tmp_long %>% select(group,sig) %>% group_by(group) %>% summarise(value = sum(sig))    
+    tmp_wide = tmp_long %>% select(group,sig) %>% group_by(group) %>% dplyr::summarise(value = sum(sig))    
     tmp_wide$source = str_split_fixed(tmp_wide$group,'\\|', n = 2)[,1]
     tmp_wide$target = str_split_fixed(tmp_wide$group,'\\|', n = 2)[,2]
     count_final = tmp_wide %>% select(source, target, value)
@@ -231,6 +231,33 @@ count_int = function(data) {
     diag(count_mat) <- dcm
     return(count_mat)
 }
+
+test_count = count_int = function(data) {
+    tmp = data %>% select(12:last_col())
+    tmp_long = tmp %>% 
+        tidyr::pivot_longer(everything(),
+               names_to = "group",
+               values_to = "value")
+    tmp_long$sig = tmp_long$value < 0.05
+    tmp_wide = tmp_long %>% select(group,sig) %>% group_by(group) %>% dplyr::summarise(value = sum(sig))    
+    tmp_wide$source = str_split_fixed(tmp_wide$group,'\\|', n = 2)[,1]
+    tmp_wide$target = str_split_fixed(tmp_wide$group,'\\|', n = 2)[,2]
+    count_final = tmp_wide %>% select(source, target, value)
+    colnames(count_final) = c("SOURCE", "TARGET", "COUNT")
+    return(count_final)
+}
+
+flist2=list()
+for(pwd in list.files()){
+    print(pwd)
+    org_path = "/root/wangje/Project/刘老师/new_cpdb"
+    pvals = read.csv(paste0(org_path,'/',pwd,'/pvalues.csv'),stringsAsFactors = F, check.names = F, header = T)
+    flist2[[pwd]] = test_count(pvals)
+
+}
+
+
+
 
 for(pwd in list.files()){
     print(pwd)
@@ -245,13 +272,31 @@ for(pwd in list.files()){
     write.table(mat, file = paste0(org_path,'/',pwd,'/out/heatmap_count.txt'), sep = '\t', row.names =T, quote = F)
 }
 
+all_names = c( "B cells","CD4+ T cells","CD8+ T cells","Cancer cells","DC",
+                "Endothelial cells","Fibroblasts","Macrophage","Mast cells",
+                "Monoc-CD14","NK cells","Plasma cells")
+my_sum = function(x, y){
+    if(all(dim(x) == dim(y))){
+        x + y
+    }else{
+        
+    }
+}
+
 merge_file = function(file, path){
     flist = list()
     for(name in file){
-        flist[[name]] = read.table(paste0(path,'/',name,'/out/heatmap_count.txt'), sep = '\t', check.names = F, header = T)
+        pvals = read.table(paste0(path,'/',name,'/out/heatmap_count.txt'), sep = '\t', check.names = F, header = T)
+        if(!(row(pvals) == 12 && ncol(pvals)) == 12){
+            
+        }
+
     }
-    return(flist)
+    
 }
+R_Pre = merge_file(file = id1, path = '/root/wangje/Project/刘老师/new_cpdb')
+
+
 
 ### 尝试直接合并pvalues文件
 flist1 = list()

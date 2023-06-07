@@ -379,10 +379,18 @@ ggsave(filename = './cpdb_sample.png', height =  30, width =  36, plot = p, bg =
 
 ############################################################
 ### 尝试直接合并pvalues文件
-flist1 = list()
-for(pwd in list.files()){
-    print(pwd)
-    org_path = "/root/wangje/Project/刘老师/new_cpdb"
-    pvals = read.csv(paste0(org_path,'/',pwd,'/pvalues.csv'),stringsAsFactors = F, check.names = F, header = T)
-    flist1[[pwd]] = pvals
+combine_cpdb <- function(...) {
+    output <- list(...)
+    anames <- c("id_cp_interaction", "interacting_pair", "partner_a", "partner_b",
+        "gene_a", "gene_b", "secreted", "receptor_a", "receptor_b", "annotation_strategy",
+        "is_integrin")
+    bnames <- c("gene_name", "uniprot", "is_complex", "protein_name", "complex_name",
+        "id_cp_interaction")
+    if (all(colnames(output[[1]])[1:11] == anames)) {
+        out <- output %>% reduce(full_join, by = anames)
+    } else if (all(colnames(output[[1]])[1:6] == bnames)) {
+        out <- output %>% reduce(full_join, by = bnames)
+    }
+    return(out)
 }
+

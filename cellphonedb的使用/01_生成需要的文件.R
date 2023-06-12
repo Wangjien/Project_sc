@@ -366,6 +366,121 @@ for(pwd in dirname){
 p = wrap_plots(flist, ncol= 6)
 ggsave(filename = './cpdb_sample.png', height =  30, width =  36, plot = p, bg = 'white')
 
+# <<<<<<<<<<<<<<<<<<< 绘制网络图 >>>>>>>>>>>>>>>>>>>>>>>>>
+library(psych)   # 这边一个心理学用的比较多的R包，可以绘制网络图
+library(qgraph)
+library(igraph)
+library(dplyr)
+library(tidyverse)
+
+# 读入上一步生成的count-network文件
+allcolour=c("#DC143C","#0000FF","#20B2AA","#FFA500","#9370DB",
+            "#98FB98","#F08080","#1E90FF","#7CFC00","#FFFF00",
+            "#808000","#FF00FF","#FA8072","#7B68EE","#9400D3",
+            "#800080","#A0522D","#D2B48C","#D2691E","#87CEEB",
+            "#40E0D0","#5F9EA0","#FF1493",
+            "#FFE4B5","#8A2BE2","#228B22","#E9967A","#4682B4",
+            "#32CD32","#F0E68C","#FFFFE0","#EE82EE","#FF6347",
+            "#6A5ACD","#9932CC","#8B008B","#8B4513","#DEB887")
+
+mynet<-read.delim('count_network.txt',check.names=FALSE)#读取数据
+table(mynet$count)
+mynet%>%filter(count>0)->mynet#过滤count为o的数据（有零会报错）
+head(mynet)
+net<-graph_from_data_frame(mynet)#构建net对象
+plot(net)
+
+karate_groups<-cluster_optimal(net)#统计每个端点的和
+coords <- layout_in_circle(net,order=order(membership(karate_groups)))#设置网络布局
+E(net)$width<- E(net)$count/10#根据count值设置边的宽
+plot(net,edge.arrow.size=.1,
+        edge.curved=0,
+        vertex.color=allcolour,
+        vertex.frame.color="#555555",
+        vertex.label.color="black",
+        layout = coords,
+        vertex.label.cex=.7)
+
+
+net2<-net#复制一份备用
+for(i in 1:length(unique(mynet$SOURCE))){#配置发出端的颜色
+        print(i)
+        E(net)[map(unique(mynet$SoURCE),function(x){
+        get.edge.ids(net,vp= c(unique(mynet$SOURCE)[i],x))
+    })%>% unlist()]$color <- allcolour[i]
+}
+
+#这波操作谁有更好的解决方案？
+plot(net,edge.arrow.size=.1,
+        edge.curved=0.2,
+        vertex.color=allcolour,
+        vertex.frame.color="#555555",
+        vertex.label.color="black",
+        layout= coords,
+        vertex.label.cex=.7)
+
+################################################################    
+### 循环绘制网络图
+plot_net = function(path){
+    for(sample in dir(path)){
+        if(file.exists(paste0(sample,"/")))
+    }
+
+}
+
+
+
+
+#####################################################################################################
+##### 使用R包ktplots绘图
+#<<<<<<<<<< 注意输入文件需要有Seurat对象挥着SingleCellExperienment对象 >>>>>>>>>>
+### 生成Seurat对象
+library(Seurat)
+library(ktplots) 
+library(dplyr)
+library(tidyverse)
+library(stringr)
+
+## 单个样本不去除批次效应
+counts = fread("CJME_counts.txt",data.table = F, header = T, sep = '\t')
+rownames(counts) = counts$gene
+counts = counts[,-1]
+scRNA = CreateSeuratObject(counts = counts)
+scRNA[['percent.mt']] = PercentageFeatureSet(scRNA, pattern = "^MT-")
+scRNA = scRNA %>% NormalizeData() %>%  FindVariableFeatures(selection.method = "vst", nfeatures = 2000) %>% ScaleData()
+scRNA = RunPCA(scRNA) 
+scRNA <- FindNeighbors(scRNA, dims = 1:50)
+scRNA <- FindClusters(scRNA, resolution = 0.5)
+scRNA <- RunUMAP(scRNA, dims = 1:50)
+
+
+
+
+
+
+
+
+scTCR_list.singleR <- GetAssayData(scRNA, solt = 'data')
+clusters <- scRNA$RNA_snn_res.0.5
+scTCR_list.singleRAll <- SingleR(
+    test = scTCR_list.singleR,
+    ref = list(encode, hema, hpca, immune, monaImmune),
+    labels = list(
+    encode$label.main,
+    hema$label.main,
+    hpca$label.main,
+    immune$label.main,
+    monaImmune$label.main),
+    clusters = clusters,
+    BPPARAM = BiocParallel::MulticoreParam(6))
+celltype = data.frame(ClusterID = rownames(scTCR_list.singleRAll), celltype=scTCR_list.singleRAll$labels, stringsAsFactors = F)
+
+
+
+
+
+
+
 
 
 
@@ -374,18 +489,25 @@ ggsave(filename = './cpdb_sample.png', height =  30, width =  36, plot = p, bg =
 
 ############################################################
 ### 尝试直接合并pvalues文件
-combine_cpdb <- function(...) {
-    output <- list(...)
-    anames <- c("id_cp_interaction", "interacting_pair", "partner_a", "partner_b",
-        "gene_a", "gene_b", "secreted", "receptor_a", "receptor_b", "annotation_strategy",
-        "is_integrin")
-    bnames <- c("gene_name", "uniprot", "is_complex", "protein_name", "complex_name",
-        "id_cp_interaction")
-    if (all(colnames(output[[1]])[1:11] == anames)) {
-        out <- output %>% reduce(full_join, by = anames)
-    } else if (all(colnames(output[[1]])[1:6] == bnames)) {
-        out <- output %>% reduce(full_join, by = bnames)
-    }
-    return(out)
-}
+# combine_cpdb <- function(...) {
+#     output <- list(...)
+#     anames <- c("id_cp_interaction", "interacting_pair", "partner_a", "partner_b",
+#         "gene_a", "gene_b", "secreted", "receptor_a", "receptor_b", "annotation_strategy",
+#         "is_integrin")
+#     bnames <- c("gene_name", "uniprot", "is_complex", "protein_name", "complex_name",
+#         "id_cp_interaction")
+#     if (all(colnames(output[[1]])[1:11] == anames)) {
+#         out <- output %>% reduce(full_join, by = anames)
+#     } else if (all(colnames(output[[1]])[1:6] == bnames)) {
+#         out <- output %>% reduce(full_join, by = bnames)
+#     }
+#     return(out)
+# }
 
+
+
+
+#############################################################################################################################################################################################################
+#### cellphoneDB v4
+#############################################################################################################################################################################################################
+# 创建虚拟环境，并且在虚拟环境中暗转需要的模块

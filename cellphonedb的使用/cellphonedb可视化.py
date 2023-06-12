@@ -15,8 +15,6 @@ library(Seurat)
 library(dior)
 library(data.table)
 
-
-
 '''
 
 
@@ -27,12 +25,4 @@ means = pd.read_csv('means.csv')
 pvals = pd.read_csv('pvalues.csv')
 decon = pd.read_csv('deconvoluted.csv')
 
-kpy.plot_cpdb_heatmap(
-        adata=adata_raw,
-        pvals=pvals,
-        celltype_key='cellphonedb_celltype',
-        figsize = (5,5),
-        title = "Sum of significant interactions"
-        # ,symmetrical = True
-    )
-
+# 合并多个文件的结果

@@ -7,7 +7,8 @@ library(BiocManager)
 library(Seurat)
 library(dplyr)
 library(BiocParallel)
-BiocManager::install('SingleR') # 安装软件
+# BiocManager::install('SingleR') # 安装软件
+library(SingleR)
 ```
 
 SingleR有7个数据库，其中5个是人类的数据库，其中有两个是小鼠的数据库
@@ -23,7 +24,10 @@ Mouse.se=MouseRNAseqData() #(鼠)
 ```
 
 ### 2 使用SingleR对seurat对象进行注释
-
+``` R
+# 读入注释数据
+load("~/singleR.RData")
+```
 #### 1) 使用SingleR中的一个数据库进行注释
 
 ```R

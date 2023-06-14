@@ -436,15 +436,17 @@ plot_net = function(path){
 #<<<<<<<<<< 注意输入文件需要有Seurat对象挥着SingleCellExperienment对象 >>>>>>>>>>
 ### 生成Seurat对象
 library(Seurat)
-library(ktplots) 
+# library(ktplots) 
 library(dplyr)
 library(tidyverse)
 library(stringr)
+library(data.table)
 
 ## 单个样本不去除批次效应
 counts = fread("CJME_counts.txt",data.table = F, header = T, sep = '\t')
 rownames(counts) = counts$gene
 counts = counts[,-1]
+counts <- as(as.matrix(counts), "dgCMatrix")
 scRNA = CreateSeuratObject(counts = counts)
 scRNA[['percent.mt']] = PercentageFeatureSet(scRNA, pattern = "^MT-")
 scRNA = scRNA %>% NormalizeData() %>%  FindVariableFeatures(selection.method = "vst", nfeatures = 2000) %>% ScaleData()
@@ -452,6 +454,9 @@ scRNA = RunPCA(scRNA)
 scRNA <- FindNeighbors(scRNA, dims = 1:50)
 scRNA <- FindClusters(scRNA, resolution = 0.5)
 scRNA <- RunUMAP(scRNA, dims = 1:50)
+
+## 绘制和弦图
+
 
 
 

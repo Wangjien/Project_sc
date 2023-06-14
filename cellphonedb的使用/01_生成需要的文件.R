@@ -454,10 +454,21 @@ scRNA = RunPCA(scRNA)
 scRNA <- FindNeighbors(scRNA, dims = 1:50)
 scRNA <- FindClusters(scRNA, resolution = 0.5)
 scRNA <- RunUMAP(scRNA, dims = 1:50)
-
+# 添加celltype
+cells = read.table('CJME_meta.txt', header = T, sep = '\t')
+scRNA$celltype = cells[match(rownames(scRNA@meta.data),cells$cell),"cellphonedb_celltype"]
 ## 绘制和弦图
 
-
+p <- plot_cpdb3(cell_type1 = 'CD8+ T cells|CD4+ T cells|Macrophage|Mast cells|DC', cell_type2 = 'Cancer cells',
+    scdata = scRNA,
+    idents = 'celltype', # column name where the cell ids are located in the metadata
+    means = means,
+    pvals = pvalues,
+    deconvoluted = deconvoluted, # new options from here on specific to plot_cpdb3
+    keep_significant_only = TRUE,
+    standard_scale = TRUE,
+    remove_self = TRUE
+    )
 
 
 
@@ -479,6 +490,8 @@ scTCR_list.singleRAll <- SingleR(
     clusters = clusters,
     BPPARAM = BiocParallel::MulticoreParam(6))
 celltype = data.frame(ClusterID = rownames(scTCR_list.singleRAll), celltype=scTCR_list.singleRAll$labels, stringsAsFactors = F)
+
+## <<<<<<<<<<< Seurat v5 >>>>>>>>>>>>>>>>>>>>
 
 
 

@@ -13,3 +13,6 @@ tmp.long =  tmp %>%
 # 去除不显著的组合
 tmp.long$sig = tmp.long$value < 0.05
 tmp.long.sig = tmp.long %>% filter(value < 0.05)
+tmp.long.sig = tmp.long.sig %>% mutate(
+        inter1 = str_split_fixed('\\|')[1]
+)

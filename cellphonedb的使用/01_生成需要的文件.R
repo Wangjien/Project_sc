@@ -529,3 +529,129 @@ celltype = data.frame(ClusterID = rownames(scTCR_list.singleRAll), celltype=scTC
 #### cellphoneDB v4
 #############################################################################################################################################################################################################
 # 创建虚拟环境，并且在虚拟环境中暗转需要的模块
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#=====================================================================================================
+# 计算不同组合共有的，独有的interaction类型
+get_prop_num = function(data1, data2){
+    df = data.frame(matrix(nrow = 144, ncol = 4))
+    colnames(df) = c('interaction','intersect_pair','data1_uniq','data2_uniq')
+    df$interaction = unique(data1$group)
+    # 计算不同的比例数目
+        for (celltype in unique(data1$group)) {
+            tmp1 = data1 %>% filter(group == celltype)
+            tmp2 = data2 %>% filter(group == celltype)
+            # cat('Data1维度: ', dim(tmp1),'\t','Data2维度: ', dim(tmp2), '\n')
+            # 共有的interaction数目
+            interaction_pair = intersect(tmp1$interacting_pair, tmp2$interacting_pair) %>% length()
+            # 查看data1中独特的interaction pair数目
+            diff_data1 = setdiff(tmp1$interacting_pair, tmp2$interacting_pair) %>% length()
+            # 查看data2中独
+            diff_data2 = setdiff(tmp2$interacting_pair, tmp1$interacting_pair) %>% length()
+            # cat(celltype,interaction_pair, diff_data2, diff_data1, '\n')
+            df[which(df$interaction==celltype),'intersect_pair'] = interaction_pair
+            df[which(df$interaction == celltype),'data1_uniq'] = diff_data1
+            df[which(df$interaction == celltype), 'data2_uniq'] = diff_data2
+    }
+    df = df %>% mutate(
+    interaction_1 = str_split_fixed(interaction, '\\|', n= 2)[,1],
+    interaction_2 = str_split_fixed(interaction, '\\|', n =2)[,2])
+    return(df)
+}
+
+#+========================================================================================================
+# 分别合并指定的配对，例如CD4+|CD8+,CD8+|CD4+这两个应该算一种，合并他们的数目
+tidy_wider = function(data, colNum = 2){
+    tmp = data %>% select(interaction_1, interaction_2, colNum)
+    colnames(tmp) = c('SOURCE','TARGET','COUNT')
+    df = tmp %>% pivot_wider(names_from = SOURCE, values_from = COUNT) %>% 
+        as.data.frame() %>% 
+        tibble::column_to_rownames('TARGET')
+    df = df %>% select(rownames(df))
+    dcm <- diag(as.matrix(df))
+    count_mat <- df + t(df)
+    diag(count_mat) <- dcm
+    return(count_mat)
+}
+
+# 分别选择并且计算
+merged_type = function(data){
+    # 合并shared tcr
+    shareed_interaction = tidy_wider(data, column = 2)
+    shareed_interaction = shared_interaction %>% tibble::rownames_to_column('SOURCE') %>% pivot_longer(-1,names_to = 'TARGET',values_to = 'Shared')
+    # data1中独有的interaction 
+    data1_interaction = tidy_wider(df, colNum = 3)
+    data1_interaction = data1_interaction %>% tibble::rownames_to_column('SOURCE') %>% pivot_longer(-1,names_to = 'TARGET',values_to = 'data1')
+    # data2独有个体
+    data2_interaction = tidy_wider(df, colNum = 4)
+    data2_interaction = data2_interaction %>% tibble::rownames_to_column('SOURCE') %>% pivot_longer(-1,names_to = 'TARGET',values_to = 'data2')
+    # 合并样本
+    tmp =  merge(shared_interaction, data1_interaction, by = c('SOURCE','TARGET'))
+    tmp = merge(tmp, data2_interaction, by = c('SOURCE','TARGET'))
+    return(tmp)
+}
+
+#===============================================================================================================
+# 去除重复的数据
+Remove_Dup = function(df){
+    df$sorted_combination <- apply(df[, c("SOURCE", "TARGET")], 1, function(x) paste(sort(x), collapse = " - "))
+    df = df[!duplicated(df$sorted_combination), ]
+    df$SUM = rowSum(df[c(3,4,5)])
+    df = dplyr::arrange(df, -SUM) 
+    colnames(df)[c(4,5)] = c('data1','data2')
+
+    # 转换为长数据 
+    tmp_long = tidy_R_Pre_NR_Pre %>% select(1:5) %>% pivot_longer(
+    cols = c('Shared','data1','data2'),
+    names_to = 'variable',
+    values_to = 'value'
+    )
+    return(tmp.long)
+
+}
+
+#==================================================================================================================
+# 绘图
+plot_col = function(data){
+    col = ifelse(grepl('Cancer cells', levels(data$x)), 'Red','black')
+    p = data %>% ggplot(aes(x = x, y = value, fill = variable)) + 
+    geom_col()+
+    coord_flip() + 
+    theme_classic() + 
+    theme(axis.text.y = element_text(size = 15))+
+    theme(axis.text.y = element_text(color = col),
+          axis.title.y = element_blank(),
+          axis.text.x = element_text(size = 15, colour = 'black'),
+          axis.title = element_text(size = 18, colour = 'black'),
+          plot.title = element_text(hjust = 0.5, size=20))+
+    scale_y_continuous(expand = c(0,0)) + 
+    labs(title = 'R_Pre vs NR_Pre') 
+    return(p)
+}
+
+#======================================================================================================================
+# 绘制气泡图
+pvales = read.table('./pvalues.csv', sep = ',', header = T, check.names = F)
+pvales_sub = pvales %>% select(interacting_pair,12:last_col())
+
+
+
+
+
+
+
+

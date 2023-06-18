@@ -645,13 +645,165 @@ plot_col = function(data){
 
 #======================================================================================================================
 # 绘制气泡图
+## 转换pvalues格式
 pvales = read.table('./pvalues.csv', sep = ',', header = T, check.names = F)
 pvales_sub = pvales %>% select(interacting_pair,12:last_col())
+pvales_sub_long = pvales_sub %>% pivot_longer(2:last_col())
+
+## 转换means.txt
+means = read.table('./means.csv', sep = ',', header = T, check.names = F)
+means_sub = means %>% select(interacting_pair,12:last_col())
+means_sub_long = means_sub %>% pivot_longer(2:last_col())
+
+
+## 查找需要的组合
+id1 <- c("CJME","CMDI","HDYU","HXZH","LCLI","WYJU","WZLA","ZXME","ZJLI_0116")
+id2 <- c("CZYI","FHXHBS1","FYYI","HEJI","LAWE","ZEYI","ZFXI","LIPE")
+id3 <- c("CJME_0707","CMDI_0624","HDYU_0720","HXZH_0220","LCLI_0623","WYJU_0122","ZXME_0223","ZJLI_0312")
+id4 = c("CZYI_0702","FHXHBS2","HEJX","LAWE_0309","ZEYI_0204") #NR_Post
+#// means 
+flist = list()
+for(index1 in id3){
+    # 读入文件
+    means = read.table('./means.csv', sep = ',', header = T, check.names = F)
+    means_sub = means %>% select(interacting_pair,12:last_col())
+    means_sub_long = means_sub %>% pivot_longer(2:last_col())
+    flist[[index1]] = means_sub_long
+}
+
+flist1 = list()
+for(i in 1:length(flist)){
+    name = names(flist[i])
+    # print(name)
+    flist1[[name]] = flist[[i]][flist[[i]]$interacting_pair %in% list1$V1,]
+    # 查找指定的组合
+    flist1[[name]] = flist1[[name]] %>% filter(name %in% c('CD8+ T cells|DC','CD8+ T cells|Macrophage','CD8+ T cells|Monoc-CD14'))
+}
+
+#// pvalues
+flist2 = list()
+for(index1 in id1){
+    # 读入文件
+    means = read.table('./pvalues.csv', sep = ',', header = T, check.names = F)
+    means_sub = means %>% select(interacting_pair,12:last_col())
+    means_sub_long = means_sub %>% pivot_longer(2:last_col())
+    flist2[[index1]] = means_sub_long
+}
+
+flist3 = list()
+for(i in 1:length(flist2)){
+    name = names(flist2[i])
+    # print(name)
+    flist3[[name]] = flist2[[i]][flist2[[i]]$interacting_pair %in% list1$V1,]
+    # 查找指定的组合
+    flist3[[name]] = flist3[[name]] %>% filter(name %in% c('CD8+ T cells|DC','CD8+ T cells|Macrophage','CD8+ T cells|Monoc-CD14'))
+}
+
+#// 合并两个文件
+merge_flist = function(file_list){
+    for(i in 1:length(file_list)){
+        print(names(file_list[i]))
+        file_list[[i]]$sample = names(file_list[i])
+    }
+    tmp = Reduce(rbind, file_list)
+    return(tmp) 
+}
+
+tmp1 = merge_flist(flist1) # means
+tmp2 = merge_flist(flist3) # pvalues
+colnames(tmp1)[3] = 'means'
+colnames(tmp2)[3] = 'pvalues'
+
+tmp = full_join(tmp1, tmp2, by = c('interacting_pair','name','sample')) 
+
+p1 = ggplot(tmp, aes(x = name, y = interacting_pair, size = -log10(pvalues), color = means))
+
+
+## // 写成函数 //
+plot_dotplot = function(ids){
+    flist = list()
+    for(index1 in ids){
+        # 读入文件
+        filename = paste0('/root/wangje/Project/刘老师/new_cpdb/Result/',index1,'/means.csv')
+        means = read.table(filename, sep = ',', header = T, check.names = F)
+        means_sub = means %>% select(interacting_pair,12:last_col())
+        means_sub_long = means_sub %>% pivot_longer(2:last_col())
+        flist[[index1]] = means_sub_long
+    }
+
+    flist1 = list()
+    for(i in 1:length(flist)){
+        name = names(flist[i])
+        # print(name)
+        flist1[[name]] = flist[[i]][flist[[i]]$interacting_pair %in% list1$V1,]
+        # 查找指定的组合
+        flist1[[name]] = flist1[[name]] %>% filter(name %in% c('CD8+ T cells|DC','CD8+ T cells|Macrophage','CD8+ T cells|Monoc-CD14'))
+    }
+
+    flist2 = list()
+    for(index1 in ids){
+        # 读入文件
+        filename = paste0('/root/wangje/Project/刘老师/new_cpdb/Result/',index1,'/pvalues.csv')
+        means = read.table(filename, sep = ',', header = T, check.names = F)
+        means_sub = means %>% select(interacting_pair,12:last_col())
+        means_sub_long = means_sub %>% pivot_longer(2:last_col())
+        flist2[[index1]] = means_sub_long
+    }
+
+    flist3 = list()
+    for(i in 1:length(flist2)){
+        name = names(flist2[i])
+        # print(name)
+        flist3[[name]] = flist2[[i]][flist2[[i]]$interacting_pair %in% list1$V1,]
+        # 查找指定的组合
+        flist3[[name]] = flist3[[name]] %>% filter(name %in% c('CD8+ T cells|DC','CD8+ T cells|Macrophage','CD8+ T cells|Monoc-CD14'))
+    }
+
+    # 合并文件
+    tmp1 = merge_flist(flist1) # means
+    tmp2 = merge_flist(flist3) # pvalues
+    colnames(tmp1)[3] = 'means'
+    colnames(tmp2)[3] = 'pvalues'
+    tmp = full_join(tmp1, tmp2, by = c('interacting_pair','name','sample')) 
+    return(tmp)
+}
+
+data1 = plot_dotplot(id1)
+data2 = plot_dotplot(id2)
+data3 = plot_dotplot(id3)
+data4 = plot_dotplot(id4)
+
+p1 = ggplot(data1, aes(x = name, y = interacting_pair, size = -log10(pvalues), color = means)) + geom_point()+ theme(axis.text.x=element_text(angle=90, hjust=1,vjust=1)) + facet_wrap(.~sample, nrow = 1)
+p2 = ggplot(data3, aes(x = name, y = interacting_pair, size = -log10(pvalues), color = means)) + geom_point() + theme(axis.text.x=element_text(angle=90, hjust=1,vjust=1)) +  facet_wrap(.~sample, nrow = 1)
+p3 = ggplot(data2, aes(x = name, y = interacting_pair, size = -log10(pvalues), color = means)) + geom_point() + theme(axis.text.x=element_text(angle=90, hjust=1,vjust=1)) +  facet_wrap(.~sample, nrow = 1)
+p4 = ggplot(data4, aes(x = name, y = interacting_pair, size = -log10(pvalues), color = means)) + geom_point() + theme(axis.text.x=element_text(angle=90, hjust=1,vjust=1)) +  facet_wrap(.~sample, nrow = 1)
+
+# 保存图片
+ggsave(filename = '/root/wangje/Project/刘老师/new_cpdb/R_pre.png',  width = 18, height = 10, plot = p1 + labs(title = 'R_Pre'))
+ggsave(filename = '/root/wangje/Project/刘老师/new_cpdb/R_post.png',  width = 18, height = 10, plot = p2 + labs(title = 'R_Post'))
+ggsave(filename = '/root/wangje/Project/刘老师/new_cpdb/NR_pre.png',  width = 18, height = 10, plot = p3 + labs(title = 'NR_Pre'))
+ggsave(filename = '/root/wangje/Project/刘老师/new_cpdb/NR_post.png',  width = 18, height = 10, plot = p4 + labs(title = 'NR_Post'))
 
 
 
 
 
+# pvals <- read.delim("pvalues.txt", check.names = FALSE)
+# means <- read.delim("means.txt", check.names = FALSE)
 
+# I've provided an example dataset
+data(cpdb_output)
 
+# pvals <- read.delim("pvalues.csv", check.names = FALSE, sep =',')
+# means <- read.delim("means.csv", check.names = FALSE, sep = ',')
+# test1 = plot_cpdb(cell_type1 = 'B cell', cell_type2 = 'CD4+ T cell', scdata = as.SingleCellExperiment(test),
+# 	idents = 'celltype', # column name where the cell ids are located in the metadata
+# 	split.by = 'Experiment', # column name where the grouping column is. Optional.
+# 	means = means, pvals = pvals,
+# 	genes = c("XCR1", "CXCL10", "CCL5")) +
+# small_axis(fontsize = 12) + small_grid() + small_guide() + small_legend(fontsize = 12) # some helper functions included in ktplots to help with the plotting
+
+# plot_cpdb(cell_type1 = 'B cells', cell_type2 = 'CD4+ T cells', scdata = as.SingleCellExperiment(test),
+#     idents = 'celltype', means = means, pvals = pvals,
+#     gene.family = 'chemokines') + small_guide() + small_axis() + small_legend(keysize=.5)
 

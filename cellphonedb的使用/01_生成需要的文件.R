@@ -268,8 +268,9 @@ generate_pvales = function(sample){
     flist_long = list()
     for(pwd in sample){
         print(pwd)
-        org_path = "/root/wangje/Project/刘老师/new_cpdb"
-        pvals = read.csv(paste0(org_path,'/',pwd,'/pvalues.csv'),stringsAsFactors = F, check.names = F, header = T)
+        org_path = "/root/wangje/Project/刘老师/new_cpdb/Reault"
+        pfile = paste0()
+        pvals = read.csv(,stringsAsFactors = F, check.names = F, header = T)
         # 保存长数据
         flist_long[[pwd]] = count_long(data = pvals)
         # 生成单个样本的宽数据

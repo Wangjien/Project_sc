@@ -808,3 +808,7 @@ data(cpdb_output)
 #     idents = 'celltype', means = means, pvals = pvals,
 #     gene.family = 'chemokines') + small_guide() + small_axis() + small_legend(keysize=.5)
 
+
+#--------------------------------------------------------
+# 分组执行cellphonddb4.0
+#-------------------------------------------------------- 

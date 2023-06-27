@@ -11,6 +11,7 @@ library(SeuratWrappers)
 big.fastmnn = '/root/wangje/wangjien_new/liu-big/scRNA_FastMNN_new.RData'
 load(big.fastmnn)
 scRNA_sub = scRNA[,scRNA$celltype == 'Epithelials']
+scRNA = NULL
 
 scRNAlist <- SplitObject(scRNA_sub,split.by="sample")
 scRNAlist <- lapply(scRNAlist, FUN = function(x) NormalizeData(x))
@@ -21,6 +22,24 @@ scRNA <- RunUMAP(scRNA, reduction = "mnn", dims = 1:50)
 scRNA <- RunTSNE(scRNA, reduction = "mnn", dims = 1:50)
 scRNA <- FindNeighbors(scRNA, reduction = "mnn", dims = 1:50)
 scRNA <- FindClusters(scRNA,resolution=seq(0.05,1,0.05))
+
+## 使用不同的min.dist
+flist = list()
+plist = list()
+for(index in c(0.001,0.005,0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9)){
+    print(sprintf('>>>>>>>> 此时的min.dist数值:%f', index))
+    scRNA <- FindNeighbors(scRNA, reduction = "mnn", dims = 1:50)
+    scRNA <- FindClusters(scRNA,resolution=seq(0.1,1,0.1))
+    scRNA = RunUMAP(scRNA, reduction = "mnn", min.dist = index, dims = 1:50)
+    flist[[as.character(index)]] = scRNA
+    tmp = DimPlot(scRNA, raster=F) + labs(title = as.character(index)) + theme(plot.title = element_text(hjust = 0.5))
+    plist[[as.character(index)]] = tmp
+}
+
+#------------------------------------------------------------------
+# liger
+#------------------------------------------------------------------
+library(liger)
 
 
 

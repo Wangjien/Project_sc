@@ -51,3 +51,5 @@ scRNA_CCA <- ScaleData(scRNA_CCA, vars.to.regress = c("percent.mt", "nFeatureRNA
 scRNA_CCA <- RunUMAP(scRNA_CCA, dims = 1:50)
 scRNA_CCA <- FindNeighbors(scRNA_CCA, dims = 1:50) %>% FindClusters(resolution = seq(0.05, 1, 0.05))
 scRNA.anchors.res <<- scRNA.anchors
+
+

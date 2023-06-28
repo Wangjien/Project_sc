@@ -78,3 +78,5 @@ plotFeature <- function(scRNA_data = scRNA_data,
 png("/root/wangje/Project/刘老师/Fibroblasts/fastMNN/查看成纤维细胞是否有其他的细胞_FeaturePlot.png",height =4000,width = 6000,res=300)
 plotFeature(scRNA_data=scRNA,choose="Feature",col_num=6,marker.list=marker.list)
 dev.off()
+
+

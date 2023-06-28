@@ -47,9 +47,9 @@ scRNAlist <- suppressMessages(scRNAlist <- lapply(scRNAlist, FUN = function(x) N
 scRNAlist <- suppressMessages(lapply(scRNAlist, FUN = function(x) FindVariableFeatures(x)))
 scRNA.anchors <- FindIntegrationAnchors(object.list = scRNAlist)
 scRNA_CCA <- IntegrateData(anchorset = scRNA.anchors)
-scRNA_CCA <- ScaleData(scRNA_CCA, vars.to.regress = c("percent.mt", "nFeatureRNA", "nCount_RNA")) %>% RunPCA(verbose = FALSE)
+scRNA_CCA <- ScaleData(scRNA_CCA) %>% RunPCA(verbose = FALSE)
 scRNA_CCA <- RunUMAP(scRNA_CCA, dims = 1:50)
 scRNA_CCA <- FindNeighbors(scRNA_CCA, dims = 1:50) %>% FindClusters(resolution = seq(0.05, 1, 0.05))
-scRNA.anchors.res <<- scRNA.anchors
+
 
 

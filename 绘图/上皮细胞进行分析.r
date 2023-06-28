@@ -27,9 +27,9 @@ scRNA <- FindClusters(scRNA,resolution=seq(0.05,1,0.05))
 flist = list()
 plist = list()
 for(index in c(0.001,0.005,0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9)){
-    print(sprintf('>>>>>>>> 此时的min.dist数值:%f', index))
+    cat('>>>>>>>> 此时的min.dist数值\n',index)
     scRNA <- FindNeighbors(scRNA, reduction = "mnn", dims = 1:50)
-    scRNA <- FindClusters(scRNA,resolution=seq(0.1,1,0.1))
+    scRNA <- FindClusters(scRNA,resolution=0.5)
     scRNA = RunUMAP(scRNA, reduction = "mnn", min.dist = index, dims = 1:50)
     flist[[as.character(index)]] = scRNA
     tmp = DimPlot(scRNA, raster=F) + labs(title = as.character(index)) + theme(plot.title = element_text(hjust = 0.5))

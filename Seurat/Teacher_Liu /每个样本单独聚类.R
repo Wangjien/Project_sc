@@ -47,3 +47,12 @@ for(i in 1:length(sample_list)){
         flist[[names(sample_list)[i]]] = tmp      
     })
 }
+
+# 绘制DimPlot
+plist2 = list()
+for(i in 1:length(flist)){
+    flog.info(names(flist[i]))
+    suppressMessages({
+        plist2[[names(flist[i])]] = DimPlot(flist[[i]], label=T, repel = T, raster=F)
+    })
+}

@@ -37,6 +37,104 @@ test <- list(Tcells=Tcells,
     Tumor_reactive=Tumor_reactive,
     PreDysfunctional=PreDysfunctional,
     DysfunctionalTF=DysfunctionalTF)
+
+
+##-----------------------------------------------------------------
+# 绘制FeaturePlot
+##-----------------------------------------------------------------
+plotFeature <- function(scRNA_data = scRNA_data,
+                        choose = "Feature",
+                        col_num = 6, marker.list = marker.list,...) {
+    pacman::p_load("Seurat", "ggplot2", "tidyverse")
+    DefaultAssay(scRNA_data) <- "RNA"
+    plist <- list()
+    if (is.null(choose)) {
+        message("请选择绘图类型")
+    } else if (choose == "Feature") {
+        for (i in names(marker.list)) {
+            for (j in marker.list[[i]]) {
+                #    print(paste0(i,"_",j))
+                tmp <- tryCatch(
+                    {
+                        FeaturePlot(scRNA_data, features = j,raster=F) +
+                            theme(legend.position = "right") +
+                            labs(title = paste0(i, "_", j))
+                    },
+                    error = function(e) {
+                        message("Error @ ", j)
+                        return(NA)
+                    },
+                    finally = {
+                        message(paste0(i, "_", j, "_next..."))
+                    }
+                )
+                plist[[paste0(i, "_", j)]] <- tmp
+            }
+        }
+        p_new <- Filter(Negate(anyNA), plist)
+        p <- wrap_plots(p_new, bycol = T, ncol = col_num)
+        return(p)
+    } else if (choose == "SCpubr") {
+        for (i in names(marker.list)) {
+            for (j in marker.list[[i]]) {
+                #    print(paste0(i,"_",j))
+                tmp <- tryCatch(
+                    {
+                        SCpubr::do_NebulosaPlot(scRNA_data, features = j, viridis_color_map = "H", pt.size = 0.02) +
+                            theme(legend.position = "righty") +
+                            labs(title = paste0(i, "_", j))
+                    },
+                    error = function(e) {
+                        message("Error @ ", j)
+                        return(NA)
+                    },
+                    finally = {
+                        message(paste0(i, "_", j, "_next..."))
+                    }
+                )
+                plist[[paste0(i, "_", j)]] <- tmp
+            }
+        }
+        p_new <- Filter(Negate(anyNA), plist)
+        p <- wrap_plots(p_new, bycol = T, ncol = col_num)
+        return(p)
+    }
+    ...
+}
+
+png('./NK-T_FeaturePlot.png', height = 9000, width = 10000, res =300)
+plotFeature(scRNA, col_num=10)
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### Seurat CCA
 plist <- list()
 for(i in names(test)){

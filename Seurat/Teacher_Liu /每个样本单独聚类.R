@@ -139,9 +139,12 @@ plotFeature <- function(scRNA_data = scRNA_data,
 }
 
 # 循环绘图
-plist3 = list()
-for(index1 in 1:length(flist)){
-    flog.info(names(flist[index1]))
-    plist3[[names(flist[index])]] = plotFeature(flist[[index1]], choose = 'Feature', 
-                                        marker.list = marker.list, col_num = 6)
+# 绘制每个样本的大群marker 基因
+plist = list()
+for(index in 1:length(flist)){
+    flog.info(names(flist[index]))
+    tmp = plotFeature(flist[[index]],choose = "Feature",col_num = 6, marker.list = marker.list )
+    plist[[names(flist[index])]] = tmp
 }
+
+for(i in 1:l)

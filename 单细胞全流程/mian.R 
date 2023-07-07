@@ -1,0 +1,24 @@
+library(Seurat)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(SeuratWrapper)
+library(stringr)
+
+
+
+
+
+
+
+
+
+# -------------------------------------------- 计算比例，并且绘制箱线图 ----------------------------------------------------------------
+plot_Rate_boxplot = function(sce, groupBy){
+    # 读入大群的样本细胞量
+    big.cell = read.table('/root/wangje/Project/刘老师/Reference_file/big.sample.cellNum.txt')
+    # 计算输入数据的细胞比例
+    sce$sample = stringr::str_split_fixe(rownames(sce@meta.data,'_[A|T|G|C]', ncol = 2)[,1])
+    
+}
+

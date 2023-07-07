@@ -74,7 +74,6 @@ PlotFractionBoxplot <- function(df.fraction=df.fraction,compaired = compaired,nc
             scale_fill_manual(values = c("#3b9aac","#a74947","#4470a1","#8da24f","#6d5a87"))
             plist[[celltype]] <- p
         }
-	plist <<- plist
 	return(plist)
 }
 
@@ -144,12 +143,15 @@ PlotFractionBoxplot <- function(df.fraction=df.fraction,compaired = compaired,nc
             plist[[celltype]] <- p
       }
     }
+    plist <<- plist
     return(patchwork::wrap_plots(plist,ncol = ncols))
 }
 # 举例
 symnum.args <- list(cutpoints = c(0, 0.005, 0.01, 0.05, 0.1, 1), symbols = c("****", "***", "**", "*", "ns"))
-PlotFractionBoxplot(df.fraction = df.merge,compaired = compaired,ncols = 3)
-
+compaired = list(c('R_Pre','R_Post'),c('NR_Pre','NR_Post'),c('NR_Pre','R_Pre'),c('NR_Post','R_Post'))
+png('./NKT_FastMNN_比例箱线图.png', height = 5000, width= 6500, res=300)
+PlotFractionBoxplot(df.fraction = df.merge,compaired = compaired,ncols = 4)
+dev.off()
 
 
 

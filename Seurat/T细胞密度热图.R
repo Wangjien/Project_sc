@@ -6,6 +6,7 @@ library(dplyr)
 library(patchwork)
 library(cowplot)
 library(SCpubr)
+library(qs)
 ## 读入文件
 # load("/data/Fat01home/wangje/Clincal_data/NKT_seurat_CCA.RData")
 # load("/data/Fat01home/wangje/Clincal_data/scRNA_seurat.RData")

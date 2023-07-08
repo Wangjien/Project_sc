@@ -149,7 +149,7 @@ PlotFractionBoxplot <- function(df.fraction=df.fraction,compaired = compaired,nc
 # 举例
 symnum.args <- list(cutpoints = c(0, 0.005, 0.01, 0.05, 0.1, 1), symbols = c("****", "***", "**", "*", "ns"))
 compaired = list(c('R_Pre','R_Post'),c('NR_Pre','NR_Post'),c('NR_Pre','R_Pre'),c('NR_Post','R_Post'))
-png('./NKT_FastMNN_比例箱线图.png', height = 5000, width= 6500, res=300)
+png('./NKT_FastMNN_比例箱线图_单样本全部细胞.png', height = 5000, width= 6500, res=300)
 PlotFractionBoxplot(df.fraction = df.merge,compaired = compaired,ncols = 4)
 dev.off()
 
@@ -159,4 +159,9 @@ dev.off()
 
 
 
-
+id1 <- c("CJME","CMDI","HDYU","HXZH","LCLI","WYJU","WZLA","ZXME","ZJLI_0116")
+id2 <- c("CZYI","FHXHBS1","FYYI","HEJI","LAWE","ZEYI","ZFXI","LIPE")
+id3 <- c("CJME_0707","CMDI_0624","HDYU_0720","HXZH_0220","LCLI_0623","WYJU_0122","ZXME_0223","ZJLI_0312")
+test1$group <-ifelse(test1$sample %in% id1, "R_Pre", 
+                                    ifelse(test1$sample %in% id2,"NR_Pre",
+                                    ifelse(test1$sample %in% id3,"R_Post","NR_Post")))

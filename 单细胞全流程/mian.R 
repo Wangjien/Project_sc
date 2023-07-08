@@ -2,8 +2,10 @@ library(Seurat)
 library(dplyr)
 library(ggplot2)
 library(patchwork)
-library(SeuratWrapper)
+library(SeuratWrappers)
 library(stringr)
+library(qs)
+
 
 
 
@@ -14,11 +16,22 @@ library(stringr)
 
 
 # -------------------------------------------- 计算比例，并且绘制箱线图 ----------------------------------------------------------------
-plot_Rate_boxplot = function(sce, groupBy){
+plot_Rate_boxplot = function(sce, groupBy, selection = "pre_dim"){
     # 读入大群的样本细胞量
-    big.cell = read.table('/root/wangje/Project/刘老师/Reference_file/big.sample.cellNum.txt')
+    big.cell = read.table('/root/wangje/Project/刘老师/Reference_file/big.sample.cellNum.txt', header=T, sep = '\t')
     # 计算输入数据的细胞比例
     sce$sample = stringr::str_split_fixe(rownames(sce@meta.data,'_[A|T|G|C]', ncol = 2)[,1])
+
     
+
+
+
 }
 
+
+# -------------------------------------------- 绘制肿瘤细胞的HLA基因表达差异 -----------------------------------------------------------
+genes  = c('HLA-DQB1', 'HLA-DQA2', 'HLA-DQA1', 
+        'HLA-DPB1','HLA-DPA1','HLA-DRB5',
+        'HLA-DRB1','HLA-DRA','HLA-F','HLA-E',
+        'HLA-C','HLA-B','HLA-A','TAP1','TYK2',
+        'JAK2','JAK1','B2M')

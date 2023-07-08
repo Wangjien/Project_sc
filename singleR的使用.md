@@ -57,6 +57,13 @@ scTCR_list.singleRAll <- SingleR(
 celltype = data.frame(ClusterID = rownames(scTCR_list.singleRAll), celltype=scTCR_list.singleRAll$labels, stringsAsFactors = F)
 ```
 
+###### 将celltype注释添加到meta.data中
+[![pCg85jS.md.png](https://s1.ax1x.com/2023/07/08/pCg85jS.md.png)](https://imgse.com/i/pCg85jS)
+```R
+colnames(celltype) = c('RNA_snn_res.0.8','SingleR')
+scRNA@meta.data = left_join(scRNA@meta.data, celltype, by = 'RNA_snn_res.0.8')
+```
+
 #####  小鼠
 
 ```R

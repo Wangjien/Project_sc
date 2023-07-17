@@ -1,3 +1,10 @@
+library(Seurat)
+library(patchwork)
+library(ggplot2)
+library(dplyr)
+library(SeuratWrappers)
+
+
 Tcells <- c('CD3D','CD3G','CD2')
 NK_cells <- c('KLRC1','KLRC3','TRDV9')
 Fibroblasts <- c('COL1A1','DCN','LUM')

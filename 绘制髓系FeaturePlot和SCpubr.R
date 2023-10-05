@@ -84,7 +84,7 @@ plotFeature <- function(scRNA_data = scRNA_data,
                 #    print(paste0(i,"_",j))
                 tmp <- tryCatch(
                     {
-                        SCpubr::do_NebulosaPlot(scRNA_data, features = j, viridis_color_map = "H", pt.size = 0.02) +
+                        SCpubr::do_NebulosaPlot(scRNA_data, features = j, viridis.palette = "H", pt.size = 0.02) +
                             theme(legend.position = "none") +
                             labs(title = paste0(i, "_", j))
                     },

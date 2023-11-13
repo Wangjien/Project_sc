@@ -174,3 +174,128 @@ p4 <- ggplot() +
 pdf("/root/wangje/Project/刘老师/NK_T/Data/CCA新的分群/new_CD4/cd4_T细胞celltype堆叠柱形图.pdf", height = 8,width = 18,family = 'ArialMT')
 p4
 dev.off()
+
+##########################################################################################
+#                    计算不同分组的TCR richness， 绘制箱线图
+##########################################################################################
+# 要求同时区分出CD4和CD8 Tcells，以及不同的celltype
+library(qs)
+library(dplyr)
+library(Seurat)
+library(ggplot2)
+library(ggpubr)
+# 去除NK cells中的数据
+scRNA <- scRNA[,!scRNA$celltype2 %in% c("CD16-CD56bright NK","CD16-CD56dim NK")]
+# 区分出CD4或CD8 T cells
+scRNA@meta.data <- scRNA@meta.data %>% mutate(
+    celltype3 = case_when(
+        celltype2 %in% c('"CD8+ Tn','Tex','Texp','Tcyto') ~ 'CD8+ T',
+        TRUE ~ 'CD4+ T'
+    )
+)
+# 分組进行统计
+test1 <- scRNA@meta.data %>% 
+  dplyr::select(Treat_assess,celltype3,Patient,TRBaa) %>% 
+  na.omit() %>% 
+  group_by(Treat_assess,celltype3, Patient) %>%  
+  summarise(TRB_type = unique(TRBaa)) %>% summarise(n1 = n())
+head(test1)
+# # A tibble: 6 × 4
+# # Groups:   Treat_assess, celltype3 [1]
+#   Treat_assess celltype3 Patient    n1
+#   <fct>        <chr>     <chr>   <int>
+# 1 R_Pre        CD4+ T    CJME      151
+# 2 R_Pre        CD4+ T    CMDI      664
+# 3 R_Pre        CD4+ T    HDYU      178
+# 4 R_Pre        CD4+ T    HXZH      699
+# 5 R_Pre        CD4+ T    LCLI     1629
+# 6 R_Pre        CD4+ T    WYJU       82  
+test2 <-  scRNA@meta.data %>% 
+  dplyr::select(Treat_assess,celltype3,Patient) %>%
+  na.omit() %>% 
+  group_by(Treat_assess,celltype3, Patient) %>% summarise(n = n())
+# 合并数据
+test3 <- left_join(test1, test2, by =c('Treat_assess','celltype3' ,'Patient'))
+test3$Prop <- test3$n1/test3$n * 100
+head(test3)
+# # A tibble: 6 × 6
+# # Groups:   Treat_assess, celltype3 [1]
+#   Treat_assess celltype3 Patient    n1     n  Prop
+#   <fct>        <chr>     <chr>   <int> <int> <dbl>
+# 1 R_Pre        CD4+ T    CJME      151   316  47.8
+# 2 R_Pre        CD4+ T    CMDI      664  3728  17.8
+# 3 R_Pre        CD4+ T    HDYU      178   480  37.1
+# 4 R_Pre        CD4+ T    HXZH      699  1621  43.1
+# 5 R_Pre        CD4+ T    LCLI     1629  5083  32.0
+# 6 R_Pre        CD4+ T    WYJU       82   283  29.0
+
+# 计算显著性
+stat.test <- test3 %>%
+    group_by(celltype3) %>%
+    wilcox_test(Prop ~ Treat_assess,comparisons = list(c('R_Pre','R_Post'),c('NR_Pre','NR_Post'),c('R_Pre','NR_Pre'),c('R_Post','NR_Post')))
+stat.test <- stat.test %>%
+    add_xy_position(x = "celltype3",dodge = 0.8)
+stat.test
+# head(stat.test)
+# # A tibble: 6 × 15
+#   celltype3 .y.   group1 group2     n1    n2 statistic     p p.adj
+#   <chr>     <chr> <chr>  <chr>   <int> <int>     <dbl> <dbl> <dbl>
+# 1 CD4+ T    Prop  R_Pre  R_Post      9     8        36 1     1    
+# 2 CD4+ T    Prop  NR_Pre NR_Post     8     5         3 0.011 0.044
+# 3 CD4+ T    Prop  R_Pre  NR_Pre      9     8        53 0.114 0.342
+# 4 CD4+ T    Prop  R_Post NR_Post     8     5        12 0.284 0.568
+# 5 CD8+ T    Prop  R_Pre  R_Post      9     8        37 0.963 1    
+# 6 CD8+ T    Prop  NR_Pre NR_Post     8     5         7 0.065 0.237
+
+# 绘图
+p1 <- ggplot(test3)+
+  geom_boxplot(aes(x = celltype3, y = Prop, fill = Treat_assess),outlier.shape = NA,position = position_dodge(width = 0.8))+
+  geom_jitter(aes(x = celltype3, y = Prop, fill = Treat_assess),color = 'black',position = position_dodge(width = 0.8),pch = 21)+
+  stat_pvalue_manual(
+    stat.test, label = "p", tip.length = 0.00,size = 4,
+      hide.ns = FALSE
+  )+
+  labs(y = '% TCR richness',x = '')+
+  scale_fill_manual(values = c('#a6cee3','#1f78b4','#b2df8a','#ff7f01','#fb9a99'))+
+  theme_test(base_size = 22,base_line_size = 1, base_rect_size = 1)+
+  theme(axis.title.x = element_blank(),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 18,color = 'black'),
+        axis.text.y = element_text(size = 22, colour = 'black'),
+        axis.title = element_text(size = 25, colour = 'black'),
+        axis.text.x = element_text(hjust = 1,vjust = 0.5, colour = "black",size = 22,angle = 90))
+
+##########################################################################################
+#                    计算不同分组的TCR Clonality， 绘制箱线图
+##########################################################################################
+# Clonality: Clonality = 1 – Evenness = 1 - Diversity/log(Richness)
+
+
+
+
+
+
+
+
+
+##########################################################################################
+#                    Reactome GSEA
+##########################################################################################
+########### clusterProlifer; Reactome  gsePathway()
+
+
+
+
+
+
+
+
+
+
+
+
+
+########### hypeR
+
+
+

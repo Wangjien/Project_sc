@@ -296,6 +296,13 @@ p1 <- ggplot(test3)+
 
 
 ########### hypeR
-
+# devtools::install_github("montilab/hypeR")
+# 1 查看可下载的数据集
+msigdb_info()
+# 2 下载HALLMARK数据（基因集列表）
+HALLMARK <- hypeR::msigdb_download(species = "Homo sapiens", category="H")
+REACTOME <- msigdb_gsets(species="Homo sapiens", category="C2", subcategory="CP:REACTOME")
+gsets <- c(HALLMARK,REACTOME)
+# 3 对差异基因进行筛选，筛选出上调和下调的基因集合,p_adj < 0.05 & avg_logFC > abs(log(1.5))
 
 

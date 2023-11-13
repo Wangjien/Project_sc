@@ -55,7 +55,7 @@ dev.off()
 # 分开CD4细胞和CD8细胞进行绘制
 
 ##--------------------------------------
-##      CD4+ T cells
+##      CD8+ T cells
 ##--------------------------------------
 # 设置clonetype类型
 scRNA@meta.data <- scRNA@meta.data %>% mutate(
@@ -117,5 +117,60 @@ p3
 dev.off()
 
 ##--------------------------------------
-##      CD8+ T cells
+##      CD4+ T cells
 ##--------------------------------------
+# CD4 T cells
+cd4_df <- scRNA@meta.data %>% dplyr::filter(celltype2 %in% cell2s) %>% select(celltype2, Treat_assess, cloneType)
+
+# 绘图
+cd4_df <- cd4_df %>% mutate(
+  x = case_when(
+    celltype2 == 'CD4+ Tn' ~ 1,
+    celltype2 == 'CD4+ Tcxcl13-ifng' ~ 2,
+    celltype2 == 'Tfh' ~ 3,
+    celltype2 == 'CD4+ Tem' ~ 4,
+    celltype2 == 'SYNE2+ CD4+ T' ~ 5,
+    celltype2 == 'Treg' ~ 6
+  )
+)
+
+# 分别提取数据
+test1 <- na.omit(cd4_df)
+test1$cloneType <- factor(test1$cloneType, levels = c(
+  rev(c("CloneSize = 1","CloneSize = 2","2 < CloneSize <=5","CloneSize > 5")
+)))
+test1$group <- test1$cloneType
+
+## 分组计算
+test2 <- test1 %>% group_by(celltype2,Treat_assess,group,x) %>% summarise(n = n())
+
+
+test1_R_Pre <- test2 %>% dplyr::filter(Treat_assess == 'R_Pre')
+test1_R_Post <- test2 %>% dplyr::filter(Treat_assess == 'R_Post')
+test1_NR_Pre <- test2 %>% dplyr::filter(Treat_assess == 'NR_Pre')
+test1_NR_Post <- test2 %>% dplyr::filter(Treat_assess == 'NR_Post')
+
+# 绘制柱形图
+p4 <- ggplot() +
+  geom_bar(data = test1_R_Pre,aes(x = x, y = n,fill = group),stat = 'identity',position = 'stack',width = 0.2)+
+  geom_bar(data = test1_R_Post,aes(x = x + 0.22, y = n,fill = group),stat = 'identity',position = 'stack',width = 0.2)+
+  geom_bar(data = test1_NR_Pre,aes(x = x + 0.44, y = n,fill = group),stat = 'identity',position = 'stack',width = 0.2)+
+  geom_bar(data = test1_NR_Post,aes(x = x + 0.66, y = n,fill = group),stat = 'identity',position = 'stack',width = 0.2)+
+  scale_fill_manual(values = rev(c('#673ca7','#b294c7','#fe992e','#fbfc94')))+
+  theme_test(base_line_size = 1,base_rect_size = 1,base_size = 40)+
+  scale_x_continuous(expand = c(0.01,0),breaks = c(1.3,2.3,3.3,4.3,5.3,6.3),
+                     labels = c('CD4+ Tn','CD4+ Tcxcl13-ifng','Tfh','CD4+ Tem','SYNE2+ CD4+ T','Treg'))+
+  scale_y_continuous(expand = c(0.02,0))+
+  labs(fill = '', y = 'Frequence')+
+  theme(axis.text.x = element_text(colour = 'black',angle = 90,hjust = 1,vjust = 0.8),
+        axis.text.y = element_text(colour = 'black'),
+        axis.title.x = element_blank())+
+  geom_vline(xintercept = 1.84, lty="dashed", color = "grey50", linewidth = 0.8)+
+  geom_vline(xintercept = 2.84, lty="dashed", color = "grey50", linewidth = 0.8)+
+  geom_vline(xintercept = 3.84, lty="dashed", color = "grey50", linewidth = 0.8)+
+  geom_vline(xintercept = 4.84, lty="dashed", color = "grey50", linewidth = 0.8)+
+  geom_vline(xintercept = 5.84, lty="dashed", color = "grey50", linewidth = 0.8)
+
+pdf("/root/wangje/Project/刘老师/NK_T/Data/CCA新的分群/new_CD4/cd4_T细胞celltype堆叠柱形图.pdf", height = 8,width = 18,family = 'ArialMT')
+p4
+dev.off()

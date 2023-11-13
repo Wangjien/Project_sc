@@ -47,7 +47,8 @@ ht3 <- GroupHeatmap(
   feature_split = de_filter$group1, 
   group.by = "celltype",
   nlabel = 50, show_row_names = FALSE,
-  species = "Homo_sapiens", db = "GO_BP", 
+  species = "Homo_sapiens", 
+  db = "KEGG", # 富集类型 
   anno_terms = TRUE, 
   anno_keys = TRUE, 
   heatmap_palcolor = colors_use,
@@ -71,19 +72,26 @@ ht <- FeatureHeatmap(
   height = 8, width = 6
 )
 
-
- ht <- FeatureHeatmap(
-      srt = scRNA,
-      group.by = "celltype",
-      features = DEGs$gene,
-      feature_split = DEGs$group1,
-      species = "Homo_sapiens",
-      db = c("GO_BP"), anno_terms = TRUE,
-    #   feature_annotation_palcolor = list(c("gold", "steelblue"), c("forestgreen")),
-      heatmap_palcolor = colors_use,
-      height = 8, width = 6,topTerm = 5, 
-      terms_fontsize = 13 # 调整GO Term字体大小
-    )
+colors_use = colorRampPalette(c("#a54894", "black", "#e5d952"))(50)
+ht <- FeatureHeatmap(
+    srt = scRNA,
+    group.by = "celltype",
+    split.by = 'Group',
+    features = new_DEGs$gene,
+    feature_split = new_DEGs$group1,
+    species = "Homo_sapiens",
+    db = c("KEGG"), # 富集类型 
+    anno_terms = FALSE,
+    keys_width = unit(10, "in"),
+    terms_width = unit(10, "in"),
+  #   feature_annotation_palcolor = list(c("gold", "steelblue"), c("forestgreen")),
+    heatmap_palcolor = colors_use,
+    show_row_names = FALSE,
+    nlabel = 0,
+    height = 16, width = 6,topTerm = 5, 
+    # ht_params = list(width = unit(4, "cm")),
+    terms_fontsize = 0 # 调整GO Term字体大小
+  )
 
 
 
@@ -102,7 +110,7 @@ ggsave(filename = './DimPlot01.pdf', height = 5, width= 5, plot = p1, bg = 'whit
 ggsave(filename = './DimPlot01.png', height = 5, width= 5, plot = p1, bg = 'white')
 
 ## Group
-mycolors <- c('#a9cce1','#2077b3','#b0e08b','#2ea327')
+mycolors <- c('#2c91a4','#a04745','#346799','#8a9d4e')
 CellDimPlot(scRNA, group.by = 'Group', xlab = 'UMAP1', ylab = 'UMAP2', show_stat = FALSE,palcolor=mycolors ) + Seurat::NoLegend() + 
     theme(axis.title = element_text(size = 20, colour = 'black'), axis.text = element_text(size = 18, colour = 'black'),
     panel.border = element_blank()) + Seurat::NoAxes() -> p2
@@ -110,13 +118,24 @@ CellDimPlot(scRNA, group.by = 'Group', xlab = 'UMAP1', ylab = 'UMAP2', show_stat
 ggsave(filename = './DimPlot02.pdf', height = 5, width= 5, plot = p2, bg = 'white')
 ggsave(filename = './DimPlot02.png', height = 5, width= 5, plot = p2, bg = 'white')
 
+# 加上legend
+mycolors <- c('#2c91a4','#a04745','#346799','#8a9d4e')
+CellDimPlot(scRNA, group.by = 'Group', xlab = 'UMAP1', ylab = 'UMAP2', show_stat = FALSE,palcolor=mycolors )+ 
+    theme(axis.title = element_text(size = 20, colour = 'black'), axis.text = element_text(size = 18, colour = 'black'),
+    panel.border = element_blank()) + Seurat::NoAxes() -> p2
+p2  <- p2 + guides(color=guide_legend(override.aes=list(size=5)))    
+
+ggsave(filename = './DimPlot02_2.pdf', height = 5, width= 5, plot = p2, bg = 'white')
+ggsave(filename = './DimPlot02_2.png', height = 5, width= 5, plot = p2, bg = 'white')
+
+
 ## Response
-CellDimPlot(scRNA, group.by = '', xlab = 'UMAP1', ylab = 'UMAP2', show_stat = FALSE) + Seurat::NoLegend() + 
+CellDimPlot(scRNA, group.by = 'Response', xlab = 'UMAP1', ylab = 'UMAP2', show_stat = FALSE) + Seurat::NoLegend() + 
     theme(axis.title = element_text(size = 20, colour = 'black'), axis.text = element_text(size = 18, colour = 'black'),
     panel.border = element_blank()) + Seurat::NoAxes() -> p2
 
-ggsave(filename = './DimPlot02.pdf', height = 5, width= 5, plot = p2, bg = 'white')
-ggsave(filename = './DimPlot02.png', height = 5, width= 5, plot = p2, bg = 'white')
+ggsave(filename = './DimPlot_Responde.pdf', height = 5, width= 5, plot = p2, bg = 'white')
+ggsave(filename = './DimPlot_Response.png', height = 5, width= 5, plot = p2, bg = 'white')
 
 ## sample
 source('/root/wangje/Project/刘老师/script/AddInformation.R')
@@ -124,11 +143,58 @@ scRNA <- AddInfo(scRNA)
 scRNA$sample <- stringr::str_split_fixed(scRNA$new_Rename,'-', n = 2)[,1]
 scRNA$sample <- factor(scRNA$sample, levels=paste0('P',1:17))
 
-CellDimPlot(scRNA, group.by = 'sample', xlab = 'UMAP1', ylab = 'UMAP2', show_stat = FALSE) + Seurat::NoLegend() + 
+CellDimPlot(scRNA, group.by = 'sample', xlab = 'UMAP1', ylab = 'UMAP2', show_stat = FALSE, legend.direction= 'horizontal', legend.position = 'bottom') + 
     theme(axis.title = element_text(size = 20, colour = 'black'), axis.text = element_text(size = 18, colour = 'black'),
     panel.border = element_blank()) + Seurat::NoAxes() -> p3
+p3 <- p3 + guides(color=guide_legend(override.aes=list(size=6)))    
+ggsave(filename = './DimPlot_sample.pdf', height = 5, width= 8, plot = p3, bg = 'white')
+ggsave(filename = './DimPlot_sample.png', height = 5, width= 8, plot = p3, bg = 'white')
+
+# 没有legend
+CellDimPlot(scRNA, group.by = 'sample', xlab = 'UMAP1', ylab = 'UMAP2', show_stat = FALSE, legend.direction= 'horizontal', legend.position = 'bottom') + 
+    theme(axis.title = element_text(size = 20, colour = 'black'), axis.text = element_text(size = 18, colour = 'black'),
+    panel.border = element_blank()) + Seurat::NoAxes() -> p3
+p3 <- p3 + Seurat::NoLegend()  
 ggsave(filename = './DimPlot_sample.pdf', height = 5, width= 5, plot = p3, bg = 'white')
 ggsave(filename = './DimPlot_sample.png', height = 5, width= 5, plot = p3, bg = 'white')
 
+
 # TCR
 scRNA$TCR <- factor(scRNA$TCR, levels = c('TCR','No TCR'))
+mycolors <- c('#81c1d7','#b9b9b5')
+CellDimPlot(scRNA, group.by = 'TCR', xlab = 'UMAP1', ylab = 'UMAP2', palcolor = mycolors,show_stat = FALSE, legend.direction= 'horizontal', legend.position = 'bottom') + 
+    theme(axis.title = element_text(size = 20, colour = 'black'), axis.text = element_text(size = 18, colour = 'black'),
+    panel.border = element_blank()) + Seurat::NoAxes() -> p3
+# p3 <- p3 + guides(color=guide_legend(override.aes=list(size=6)))
+p3 <- p3 + Seurat::NoLegend()
+
+ggsave(filename = './DimPlot_TCR.pdf', height = 5, width= 5, plot = p3, bg = 'white')
+ggsave(filename = './DimPlot_TCR.png', height = 5, width= 5, plot = p3, bg = 'white')
+
+ids5 <- c(
+    "P1-Pre", "P1-Post", "P2-Pre", "P2-Post", "P3-Pre", "P3-Post", "P4-Pre", "P4-Post", "P5-Pre", "P5-Post", "P6-Pre", "P6-Post",
+    "P7-Pre", "P7-Post", "P8-Pre", "P8-Post", "P9-Pre","P10-Pre", "P10-Post", "P11-Pre", "P11-Post", "P12-Pre", "P12-Post", "P13-Pre", "P13-Post",
+    "P14-Pre", "P14-Post", "P15-Pre", "P16-Pre", "P17-Pre"
+)
+scRNA$new_Rename <- factor(scRNA$new_Rename , levels= ids5)
+scRNA$sample  <- stringr::str_split_fixed(scRNA$new_Rename, '-', n=2)[,1]
+scRNA$sample  <- factor(scRNA$sample, levels = paste0('P',1:17))
+
+mycolors  <- c('#da7100','#a976bc','#bd2918','#2c71a2')
+CellDimPlot(scRNA, group.by = 'Tissue', xlab = 'UMAP1', ylab = 'UMAP2',palcolor = mycolors,show_stat = FALSE, legend.direction= 'horizontal', legend.position = 'bottom') + 
+    theme(axis.title = element_text(size = 20, colour = 'black'), axis.text = element_text(size = 18, colour = 'black'),
+    panel.border = element_blank()) + Seurat::NoAxes() -> p3
+# p3 <- p3 + guides(color=guide_legend(override.aes=list(size=6)))   
+p3 <- p3 + Seurat::NoLegend() 
+ggsave(filename = './DimPlot_Tissue.pdf', height = 5, width= 5, plot = p3, bg = 'white')
+ggsave(filename = './DimPlot_Tissue.png', height = 5, width= 5, plot = p3, bg = 'white')
+
+
+
+
+p1 <- CellStatPlot(scRNA, stat.by = "celltype", group.by = "new_Rename", label = FALSE, plot_type = 'trend', 
+  legend.direction = 'horizontal',legend.position = 'top')
+p1 + guides(color=guide_legend(override.aes=list(size=6))) + 
+    theme(legend.text = element_text(size = 10, color = 'black'),axis.title.x = element_blank())
+
+

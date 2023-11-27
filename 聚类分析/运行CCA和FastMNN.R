@@ -27,7 +27,8 @@ RunCluster <- function(scRNA_data = scRNA_seurat,
     if (is.null(choose)) {
         message("还没有选择聚类方式,请选择聚类方式")
     } else if (choose == "CCA") {
-        scRNA.anchors <- FindIntegrationAnchors(object.list = scRNAlist)
+        features <- SelectIntegrationFeatures(object.list = scRNAlist)
+        scRNA.anchors <- FindIntegrationAnchors(object.list = scRNAlist，anchor.features = features)
         scRNA_CCA <- IntegrateData(anchorset = scRNA.anchors)
         scRNA_CCA <- ScaleData(scRNA_CCA, vars.to.regress = c("percent.mt", "nFeatureRNA", "nCount_RNA")) %>% RunPCA(verbose = FALSE)
         scRNA_CCA <- RunUMAP(scRNA_CCA, dims = 1:30)
